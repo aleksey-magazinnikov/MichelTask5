@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Application Title="DXApplication5">
+  <Options>
+    <LayoutManagerOptions RequiredFieldMark="*" />
+  </Options>
+  <SchemaModules>
+    <SchemaModule Name="SystemModule" Version="21.2.4.0" IsNewNode="True" />
+  </SchemaModules>
+  <Views>
+    <DetailView Id="Work_Order_DetailView">
+      <Layout>
+        <LayoutGroup Id="Main" RelativeSize="100">
+          <LayoutGroup Id="SimpleEditors" RelativeSize="43.963782696177063">
+            <LayoutGroup Id="Work_Order" RelativeSize="100">
+              <LayoutGroup Id="Work_Order_col1" RelativeSize="99.9322033898305">
+                <LayoutGroup Id="Auto0c7faf5c-20f5-4672-8534-4b82c8e94b6f" ShowCaption="False" Caption="" Direction="Horizontal" Index="0" RelativeSize="17.21311475409836" IsNewNode="True">
+                  <LayoutItem Id="Prefix" ViewItem="Prefix" Index="0" RelativeSize="25.508819538670284" IsNewNode="True" />
+                  <LayoutItem Id="WO_Num" ViewItem="WO_Num" Index="1" RelativeSize="24.830393487109905" IsNewNode="True" />
+                  <LayoutItem Id="WO_Tasks" ViewItem="WO_Tasks" Index="2" RelativeSize="24.830393487109905" IsNewNode="True" />
+                  <LayoutItem Id="WorkOrder_Number" ViewItem="WorkOrder_Number" Index="3" RelativeSize="24.830393487109905" IsNewNode="True" />
+                </LayoutGroup>
+                <LayoutItem Id="Prefix" ViewItem="Prefix" Index="0" RelativeSize="17.21311475409836" Removed="True" />
+                <LayoutGroup Id="Autobe34892f-7f06-4883-8d70-d4bf9e0b8252" ShowCaption="False" Caption="" Index="1" RelativeSize="82.786885245901644" IsNewNode="True">
+                  <LayoutItem Id="Site" ViewItem="Site" Index="0" RelativeSize="15.841584158415841" IsNewNode="True" />
+                  <LayoutItem Id="AssignedToDepartment" ViewItem="AssignedToDepartment" Index="1" RelativeSize="15.841584158415841" IsNewNode="True" />
+                  <LayoutItem Id="Status" ViewItem="Status" Index="2" RelativeSize="15.841584158415841" IsNewNode="True" />
+                  <LayoutItem Id="Work_orderDate" ViewItem="Work_orderDate" Index="3" RelativeSize="15.841584158415841" IsNewNode="True" />
+                  <LayoutGroup Id="Auto7ddf93c7-6ec0-4981-aba6-4d2e3d005e12" ShowCaption="False" Caption="" Direction="Horizontal" Index="4" RelativeSize="36.633663366336634" IsNewNode="True">
+                    <LayoutGroup Id="Autoa35b1561-be69-4d54-8557-d99094f000b4" ShowCaption="False" Caption="" Index="0" RelativeSize="37.584803256445049" IsNewNode="True">
+                      <LayoutItem Id="PlannedStartDate" ViewItem="PlannedStartDate" Index="0" RelativeSize="43.243243243243242" IsNewNode="True" />
+                      <LayoutItem Id="PlannedEndDate" ViewItem="PlannedEndDate" Index="1" RelativeSize="56.756756756756758" IsNewNode="True" />
+                    </LayoutGroup>
+                    <LayoutGroup Id="Auto91bcf9b0-3aea-49f8-8c86-4c2b3dea9116" ShowCaption="False" Caption="" Index="1" RelativeSize="62.415196743554951" IsNewNode="True">
+                      <LayoutItem Id="StartDate" ViewItem="StartDate" Index="0" RelativeSize="43.243243243243242" IsNewNode="True" />
+                      <LayoutItem Id="EndDate" ViewItem="EndDate" Index="1" RelativeSize="56.756756756756758" IsNewNode="True" />
+                    </LayoutGroup>
+                  </LayoutGroup>
+                </LayoutGroup>
+                <LayoutItem Id="Site" RelativeSize="15.09433962264151" Index="1" Removed="True" />
+                <LayoutItem Id="AssignedToDepartment" RelativeSize="15.09433962264151" Index="2" Removed="True" />
+                <LayoutItem Id="Status" RelativeSize="15.09433962264151" Index="3" Removed="True" />
+                <LayoutItem Id="Work_orderDate" ViewItem="Work_orderDate" Index="4" RelativeSize="15.09433962264151" Removed="True" />
+                <LayoutItem Id="Work_Request" RelativeSize="34.905660377358494" Index="4" Removed="True" />
+                <LayoutItem Id="WO_Num" Removed="True" />
+              </LayoutGroup>
+              <LayoutGroup Id="Work_Order_col2" RelativeSize="0.067796610169491525" Caption="Work_Order_col2">
+                <LayoutItem Id="WorkOrder_Number" ViewItem="WorkOrder_Number" Index="0" RelativeSize="100" Removed="True" />
+                <LayoutItem Id="EndDate" ViewItem="EndDate" Index="1" RelativeSize="82.786885245901644" Removed="True" />
+                <LayoutItem Id="PlannedEndDate" RelativeSize="15.09433962264151" Index="1" Removed="True" />
+                <LayoutItem Id="PlannedStartDate" RelativeSize="17.777777777777779" Index="1" Removed="True" />
+                <LayoutItem Id="StartDate" RelativeSize="15.09433962264151" Index="1" Removed="True" />
+                <LayoutItem Id="WO_Tasks" RelativeSize="15.09433962264151" Removed="True" />
+              </LayoutGroup>
+            </LayoutGroup>
+          </LayoutGroup>
+          <LayoutGroup Id="SizeableEditors" RelativeSize="28.87323943661972" Caption="Request_Description">
+            <LayoutItem Id="Work_Request" ViewItem="Work_Request" Index="0" RelativeSize="18.815331010452962" IsNewNode="True" />
+            <LayoutItem Id="Request_Description" RelativeSize="81.184668989547035" Index="1" />
+          </LayoutGroup>
+          <LayoutGroup Id="Tasks_Group" Direction="Vertical" RelativeSize="27.162977867203221">
+            <LayoutItem Id="Tasks" RelativeSize="100" />
+          </LayoutGroup>
+        </LayoutGroup>
+      </Layout>
+    </DetailView>
+  </Views>
+</Application>

@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Application Logo="ExpressAppLogo">
+  <NavigationItems NavigationStyle="Accordion" ShowImages="False" DefaultChildItemsDisplayStyle="List">
+    <Items>
+      <Item Id="Maintenance">
+        <Items>
+          <Item Id="WorkGeneration_ListView" ViewId="WorkGeneration_DetailView" />
+          <Item Id="WorkLoad_ListView" ViewId="WorkLoad_DetailView" />
+        </Items>
+      </Item>
+    </Items>
+  </NavigationItems>
+  <Options UIType="TabbedMDI" FormStyle="Ribbon" ShowTabImage="False">
+    <LayoutManagerOptions EnableLayoutGroupImages="False" />
+  </Options>
+  <SchemaModules>
+    <SchemaModule Name="SystemModule" Version="21.1.5.0" IsNewNode="True" />
+    <SchemaModule Name="SystemWindowsFormsModule" Version="21.1.5.0" IsNewNode="True" />
+  </SchemaModules>
+  <Views>
+    <DetailView Id="WorkLoad_DetailView">
+      <Items>
+        <PropertyEditor Id="Items_Chart" PropertyName="Items" View="WorkLoad_Items_ListView_Chart" IsNewNode="True" />
+      </Items>
+      <Layout>
+        <LayoutGroup Id="Main" RelativeSize="100">
+          <LayoutGroup Id="SimpleEditors" RelativeSize="11.252268602540834">
+            <LayoutGroup Id="WorkLoad" RelativeSize="100">
+              <LayoutItem Id="FromDate" RelativeSize="51.612903225806448" />
+              <LayoutItem Id="LastDate" RelativeSize="48.387096774193552" />
+            </LayoutGroup>
+          </LayoutGroup>
+          <TabbedGroup Id="Item1" CaptionLocation="Top" Index="1" RelativeSize="88.747731397459162" IsNewNode="True">
+            <LayoutGroup Id="Items_Group" ShowCaption="True" Caption="Items" TextAlignMode="AlignWithChildren" Index="0" RelativeSize="100" IsNewNode="True">
+              <LayoutItem Id="Items" ViewItem="Items" Index="0" RelativeSize="100" TextAlignMode="AutoSize" IsNewNode="True" />
+            </LayoutGroup>
+            <LayoutGroup Id="Item2" ShowCaption="True" CaptionLocation="Top" Direction="Vertical" Index="1" TextAlignMode="AlignWithChildren" RelativeSize="100" Caption="Item2" IsNewNode="True">
+              <LayoutItem Id="Items_Chart" ViewItem="Items_Chart" Index="0" RelativeSize="100" IsNewNode="True" />
+            </LayoutGroup>
+          </TabbedGroup>
+          <LayoutGroup Id="Items_Group" Removed="True" />
+        </LayoutGroup>
+      </Layout>
+    </DetailView>
+  </Views>
+</Application>
