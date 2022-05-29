@@ -112,6 +112,7 @@
     <Compile Include="BusinessObjects\ShiftWoParameters.cs" />
     <Compile Include="BusinessObjects\WorkDepartment.cs" />
     <Compile Include="BusinessObjects\WorkGeneration.cs" />
+    <Compile Include="BusinessObjects\WorkGenerationItem.cs" />
     <Compile Include="BusinessObjects\WorkLoad.cs" />
     <Compile Include="BusinessObjects\WorkLoadItem.cs" />
     <Compile Include="BusinessObjects\WorkSite.cs" />

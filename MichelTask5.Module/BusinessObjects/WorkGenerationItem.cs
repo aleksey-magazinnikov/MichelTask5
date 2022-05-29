@@ -5,13 +5,13 @@ using DevExpress.Xpo;
 namespace MichelTask5.Module.BusinessObjects
 {
     [DeferredDeletion(false)]
-    public class WorkLoadItem : XPLiteObject
+    public class WorkGenerationItem : XPLiteObject
     {
-        public WorkLoadItem(Session session) : base(session) { }
-        
+        public WorkGenerationItem(Session session) : base(session) { }
+
         [Key(AutoGenerate = true), Browsable(false)]
         public int Oid { get; set; }
-        
+
         Guid _planId;
         [Browsable(false)]
         public Guid PlanId
@@ -20,6 +20,22 @@ namespace MichelTask5.Module.BusinessObjects
             set { SetPropertyValue(nameof(PlanId), ref _planId, value); }
         }
         
+        Guid _workGenerationId;
+        [Browsable(false)]
+        public Guid WorkGenerationId
+        {
+            get { return _workGenerationId; }
+            set { SetPropertyValue(nameof(WorkGenerationId), ref _workGenerationId, value); }
+        }
+        
+        Guid _workOrderId;
+        [Browsable(false)]
+        public Guid WorkOrderId
+        {
+            get { return _workOrderId; }
+            set { SetPropertyValue(nameof(WorkOrderId), ref _workOrderId, value); }
+        }
+
         string _planNumber;
         public string PlanNumber
         {
@@ -41,7 +57,7 @@ namespace MichelTask5.Module.BusinessObjects
             get { return _operationNumber; }
             set { SetPropertyValue(nameof(OperationNumber), ref _operationNumber, value); }
         }
-        
+
         Guid _userId;
         [Browsable(false)]
         public Guid UserId
@@ -55,35 +71,6 @@ namespace MichelTask5.Module.BusinessObjects
         {
             get { return _userName; }
             set { SetPropertyValue(nameof(UserName), ref _userName, value); }
-        }
-
-        Guid? _equipmentId;
-        [Browsable(false)]
-        public Guid? EquipmentId
-        {
-            get { return _equipmentId; }
-            set { SetPropertyValue(nameof(EquipmentId), ref _equipmentId, value); }
-        }
-
-        string _equipment;
-        public string Equipment
-        {
-            get { return _equipment; }
-            set { SetPropertyValue(nameof(Equipment), ref _equipment, value); }
-        }
-        
-        DateTime _dueDate;
-        public DateTime DueDate
-        {
-            get { return _dueDate; }
-            set { SetPropertyValue(nameof(DueDate), ref _dueDate, value); }
-        }
-
-        private bool separateWorkOrderPerEquipment;
-        public bool SeparateWorkOrderPerEquipment
-        {
-            get { return separateWorkOrderPerEquipment; }
-            set { SetPropertyValue(nameof(SeparateWorkOrderPerEquipment), ref separateWorkOrderPerEquipment, value); }
         }
     }
 }

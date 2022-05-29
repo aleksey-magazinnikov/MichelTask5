@@ -15,16 +15,18 @@ using DevExpress.Xpo;
 
 namespace MichelTask5.Module.BusinessObjects
 {
-  [DefaultClassOptions, NavigationItem("Maintenance")]
-  [RuleObjectExists("AnotherWorkGenerationExists", DefaultContexts.Save, "User.Oid == CurrentUserId()", InvertResult = true,
-      CustomMessageTemplate = "Another WorkGeneration already exists.")]
-  [RuleCriteria("CannotDeleteWorkGeneration", DefaultContexts.Delete, "False",
-      CustomMessageTemplate = "Cannot delete WorkGeneration.")]
+    [DefaultClassOptions, NavigationItem("Maintenance")]
+    [RuleObjectExists("AnotherWorkGenerationExists", DefaultContexts.Save, "User.Oid == CurrentUserId()",
+        InvertResult = true,
+        CustomMessageTemplate = "Another WorkGeneration already exists.")]
+    [RuleCriteria("CannotDeleteWorkGeneration", DefaultContexts.Delete, "False",
+        CustomMessageTemplate = "Cannot delete WorkGeneration.")]
     public class WorkGeneration : BaseObject
     {
         public WorkGeneration(Session session) : base(session)
         {
         }
+
         public override void AfterConstruction()
         {
             base.AfterConstruction();
@@ -38,6 +40,7 @@ namespace MichelTask5.Module.BusinessObjects
         }
 
         DateTime fromDate;
+
         [ImmediatePostData]
         public DateTime FromDate
         {
@@ -46,6 +49,7 @@ namespace MichelTask5.Module.BusinessObjects
         }
 
         DateTime toDate;
+
         [ImmediatePostData]
         public DateTime ToDate
         {
@@ -54,6 +58,7 @@ namespace MichelTask5.Module.BusinessObjects
         }
 
         PermissionPolicyUser user;
+
         [ModelDefault("AllowEdit", "False")]
         public PermissionPolicyUser User
         {
@@ -61,7 +66,8 @@ namespace MichelTask5.Module.BusinessObjects
             set => SetPropertyValue("User", ref user, value);
         }
 
-        PermissionPolicyUser GetCurrentUser() => Session.GetObjectByKey<PermissionPolicyUser>(SecuritySystem.CurrentUserId);
+        PermissionPolicyUser GetCurrentUser() =>
+            Session.GetObjectByKey<PermissionPolicyUser>(SecuritySystem.CurrentUserId);
 
         private BindingList<WorkLoadItem> _items = null;
 
@@ -77,6 +83,23 @@ namespace MichelTask5.Module.BusinessObjects
                 }
 
                 return _items;
+            }
+        }
+
+        private BindingList<WorkGenerationItem> _listOfGeneratedWorkOrders = null;
+
+        [CollectionOperationSet(AllowAdd = false, AllowRemove = false)]
+        public BindingList<WorkGenerationItem> ListOfGeneratedWorkOrders
+        {
+            get
+            {
+                if (_listOfGeneratedWorkOrders == null)
+                {
+                    _listOfGeneratedWorkOrders = new BindingList<WorkGenerationItem>();
+
+                }
+
+                return _listOfGeneratedWorkOrders;
             }
         }
 
@@ -100,7 +123,8 @@ namespace MichelTask5.Module.BusinessObjects
             return days;
         }
 
-        public WorkLoadItem CreateWorkLoadItem(M_Plan plan, string currentUserName, object currentUser, DateTime? dueDate)
+        public WorkLoadItem CreateWorkLoadItem(M_Plan plan, string currentUserName, object currentUser,
+            DateTime? dueDate)
         {
             var workLoadItem = new WorkLoadItem(Session)
             {
@@ -123,6 +147,26 @@ namespace MichelTask5.Module.BusinessObjects
             workLoadItem.Save();
 
             return workLoadItem;
+        }
+
+        public WorkGenerationItem CreateWorkGenerationItem(M_Plan plan, string currentUserName, object currentUser,
+            Guid workOrderOid)
+        {
+            var workGenerationItem = new WorkGenerationItem(Session)
+            {
+                PlanNumber = plan.M_Plan_Num,
+                OperationNumber = plan.Plan_Operation.M_Operation_Num,
+                PlanId = plan.Oid,
+                OperationId = plan.Plan_Operation.Oid,
+                UserId = Guid.Parse(currentUser.ToString()),
+                UserName = currentUserName,
+                WorkOrderId = workOrderOid,
+                WorkGenerationId = this.Oid
+            };
+
+            workGenerationItem.Save();
+
+            return workGenerationItem;
         }
     }
 }

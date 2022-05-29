@@ -20,16 +20,14 @@ namespace MichelTask5.Module.Controllers
 
         public WorkGenerationViewController()
         {
-            TargetObjectType = typeof(WorkGeneration);
-
             generateWorkOrder = new SimpleAction(this, "GenerateWorkOrder", PredefinedCategory.Edit)
             {
                 SelectionDependencyType = SelectionDependencyType.Independent,
                 Caption = "Generate Work Order",
-                TargetViewId = "WorkGeneration_Items_ListView"
+                TargetViewId = "WorkGeneration_Items_ListView",
             };
 
-            generateWorkOrder.Execute += GenerateWork_Execute;
+            generateWorkOrder.Execute += GenerateWorkOrder_Execute;
 
 
             generateWorkLoad = new SimpleAction(this, "GenerateWorkLoadInWorkGeneration", PredefinedCategory.Edit)
@@ -42,7 +40,7 @@ namespace MichelTask5.Module.Controllers
             generateWorkLoad.Execute += GenerateWorkLoad_Execute;
         }
 
-        private void GenerateWork_Execute(object sender, SimpleActionExecuteEventArgs e)
+        private void GenerateWorkOrder_Execute(object sender, SimpleActionExecuteEventArgs e)
         {
             var objectsToProcess = new ArrayList(e.SelectedObjects);
             MessageOptions options;
@@ -65,77 +63,100 @@ namespace MichelTask5.Module.Controllers
                 return;
             }
 
-            foreach (WorkLoadItem obj in objectsToProcess)
+            if (View is ListView listView)
             {
-                var os = Application.CreateObjectSpace(typeof(Work_Order));
-                var plan = os.GetObjectByKey<M_Plan>(obj.PlanId);
-
-                if (plan.SeparateWorkOrderPerEquipment && plan.Equipments.Any())
+                if (listView.CollectionSource is PropertyCollectionSource collectionSource)
                 {
-                    var taskNumber = 1;
-
-                    foreach (var equipment in plan.Equipments)
+                    if (collectionSource.MasterObject is WorkGeneration workGeneration)
                     {
-                        var workOrder = CreateWorkOrder(os, plan, obj, out var operation);
-                        var woTask = CreateWoTask(os, operation, equipment, obj, taskNumber);
+                        var objectSpace = listView.ObjectSpace;
+                        workGeneration.Items.Clear();
+                        DeleteAllWorkGenerationItems(objectSpace);
 
-                        workOrder.Tasks.Add(woTask);
+                        foreach (WorkLoadItem obj in objectsToProcess)
+                        {
+                            var os = Application.CreateObjectSpace(typeof(Work_Order));
+                            var plan = os.GetObjectByKey<M_Plan>(obj.PlanId);
 
-                        taskNumber++;
+                            if (plan.SeparateWorkOrderPerEquipment && plan.Equipments.Any())
+                            {
+                                var taskNumber = 1;
 
-                        workOrder.Save();
+                                foreach (var equipment in plan.Equipments)
+                                {
+                                    var workOrder = CreateWorkOrder(os, plan, obj, out var operation);
+                                    var woTask = CreateWoTask(os, operation, equipment, obj, taskNumber);
+
+                                    workOrder.Tasks.Add(woTask);
+
+                                    taskNumber++;
+
+                                    workOrder.Save();
+                                    var workGenerationItem = workGeneration.CreateWorkGenerationItem(plan,
+                                        SecuritySystem.CurrentUserName,
+                                        SecuritySystem.CurrentUserId, workOrder.Oid);
+                                    workGeneration.ListOfGeneratedWorkOrders.Add(workGenerationItem);
+                                }
+                            }
+                            else
+                            {
+                                var workOrder = CreateWorkOrder(os, plan, obj, out var operation);
+
+                                var taskNumber = 1;
+                                foreach (var equipment in plan.Equipments)
+                                {
+                                    var woTask = CreateWoTask(os, operation, equipment, obj, taskNumber);
+
+                                    workOrder.Tasks.Add(woTask);
+                                    taskNumber++;
+                                }
+
+                                workOrder.Save();
+                                var workGenerationItem = workGeneration.CreateWorkGenerationItem(plan,
+                                    SecuritySystem.CurrentUserName,
+                                    SecuritySystem.CurrentUserId, workOrder.Oid);
+                                workGeneration.ListOfGeneratedWorkOrders.Add(workGenerationItem);
+                            }
+
+                            plan.Plan_Status = 2;
+                            if (!plan.Rolling_Plan)
+                            {
+                                plan.BaseDate = DateTime.Today;
+                            }
+                            else
+                            {
+                                if (plan.BaseDate < obj.DueDate)
+                                {
+                                    plan.BaseDate = obj.DueDate;
+                                }
+                            }
+
+                            plan.LastDate = DateTime.Today;
+                            plan.NextDate = GetNextDate(plan);
+
+                            os.CommitChanges();
+                            objectSpace.CommitChanges();
+                        }
+
+                        options = new MessageOptions
+                        {
+                            Duration = 2000,
+                            Message = "Work Order has been created",
+                            Type = InformationType.Success,
+                            Web = {Position = InformationPosition.Top},
+                            Win =
+                            {
+                                Caption = "Success",
+                                Type = WinMessageType.Flyout
+                            }
+                        };
+
+                        Application.ShowViewStrategy.ShowMessage(options);
                     }
                 }
-                else
-                {
-                    var workOrder = CreateWorkOrder(os, plan, obj, out var operation);
-
-                    var taskNumber = 1;
-                    foreach (var equipment in plan.Equipments)
-                    {
-                        var woTask = CreateWoTask(os, operation, equipment, obj, taskNumber);
-
-                        workOrder.Tasks.Add(woTask);
-                        taskNumber++;
-                    }
-
-                    workOrder.Save();
-                }
-
-                plan.Plan_Status = 2;
-                if (!plan.Rolling_Plan)
-                {
-                    plan.BaseDate = DateTime.Today;
-                }
-                else
-                {
-                    if (plan.BaseDate < obj.DueDate)
-                    {
-                        plan.BaseDate = obj.DueDate;
-                    }
-                }
-
-                plan.LastDate = DateTime.Today;
-                plan.NextDate = GetNextDate(plan);
-
-                os.CommitChanges();
             }
-
-            options = new MessageOptions
-            {
-                Duration = 2000,
-                Message = "Work Order has been created",
-                Type = InformationType.Success,
-                Web = {Position = InformationPosition.Top},
-                Win =
-                {
-                    Caption = "Success",
-                    Type = WinMessageType.Flyout
-                }
-            };
-
-            Application.ShowViewStrategy.ShowMessage(options);
         }
+
         private void GenerateWorkLoad_Execute(object sender, SimpleActionExecuteEventArgs e)
         {
             if (View.CurrentObject is WorkGeneration workGeneration)
@@ -250,6 +271,18 @@ namespace MichelTask5.Module.Controllers
             }
 
             return nextDate;
+        }
+
+        private static void DeleteAllWorkGenerationItems(IObjectSpace os)
+        {
+            var colDelete = os.GetObjects<WorkGenerationItem>(CriteriaOperator.Parse("UserId = ?",
+                SecuritySystem.CurrentUserId));
+            foreach (var item in colDelete.ToList())
+            {
+                item.Delete();
+            }
+
+            os.CommitChanges();
         }
     }
 }
