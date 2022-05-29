@@ -6,17 +6,36 @@ using System.Text;
 using System.Threading.Tasks;
 using DevExpress.Data.Filtering;
 using DevExpress.ExpressApp;
+using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl;
+using DevExpress.Persistent.BaseImpl.PermissionPolicy;
+using DevExpress.Persistent.Validation;
 using DevExpress.Xpo;
 
 namespace MichelTask5.Module.BusinessObjects
 {
     [DefaultClassOptions, NavigationItem("Maintenance")]
+    [RuleObjectExists("AnotherWorkLoadExists", DefaultContexts.Save, "User.Oid == CurrentUserId()", InvertResult = true,
+        CustomMessageTemplate = "Another WorkLoad already exists.")]
+    [RuleCriteria("CannotDeleteWorkLoad", DefaultContexts.Delete, "False",
+        CustomMessageTemplate = "Cannot delete WorkLoad.")]
     public class WorkLoad : BaseObject
     {
         public WorkLoad(Session session) : base(session)
         {
+        }
+
+        public override void AfterConstruction()
+        {
+            base.AfterConstruction();
+            User = GetCurrentUser();
+        }
+
+        protected override void OnSaving()
+        {
+            base.OnSaving();
+            User = GetCurrentUser();
         }
 
         DateTime fromDate;
@@ -34,6 +53,16 @@ namespace MichelTask5.Module.BusinessObjects
             get { return toDate; }
             set { SetPropertyValue(nameof(ToDate), ref toDate, value); }
         }
+
+        PermissionPolicyUser user;
+        [ModelDefault("AllowEdit", "False")]
+        public PermissionPolicyUser User
+        {
+            get => user;
+            set => SetPropertyValue("User", ref user, value);
+        }
+
+        PermissionPolicyUser GetCurrentUser() => Session.GetObjectByKey<PermissionPolicyUser>(SecuritySystem.CurrentUserId);
 
         private BindingList<WorkLoadItem> _items = null;
 

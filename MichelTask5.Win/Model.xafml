@@ -1,14 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Application Logo="ExpressAppLogo">
   <NavigationItems NavigationStyle="Accordion" ShowImages="False" DefaultChildItemsDisplayStyle="List">
-    <Items>
-      <Item Id="Maintenance">
-        <Items>
-          <Item Id="WorkGeneration_ListView" ViewId="WorkGeneration_DetailView" />
-          <Item Id="WorkLoad_ListView" ViewId="WorkLoad_DetailView" />
-        </Items>
-      </Item>
-    </Items>
   </NavigationItems>
   <Options UIType="TabbedMDI" FormStyle="Ribbon" ShowTabImage="False">
     <LayoutManagerOptions EnableLayoutGroupImages="False" />

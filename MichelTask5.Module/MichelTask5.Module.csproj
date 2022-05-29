@@ -124,6 +124,8 @@
     <Compile Include="Controllers\CreateWorkOrderFromOperationController.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controllers\FilterWorkGenerationListViewController.cs" />
+    <Compile Include="Controllers\FilterWorkLoadListViewController.cs" />
     <Compile Include="Controllers\ShiftWorkOrderViewController.cs">
       <SubType>Component</SubType>
     </Compile>
