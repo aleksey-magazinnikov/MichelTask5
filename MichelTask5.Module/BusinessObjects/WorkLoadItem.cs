@@ -11,7 +11,7 @@ using DevExpress.Xpo;
 
 namespace MichelTask5.Module.BusinessObjects
 {
-    [DeferredDeletion(true)]
+    [DeferredDeletion(false)]
     public class WorkLoadItem : XPLiteObject
     {
         public WorkLoadItem(Session session) : base(session) { }
@@ -33,7 +33,15 @@ namespace MichelTask5.Module.BusinessObjects
             get { return _planNumber; }
             set { SetPropertyValue(nameof(PlanNumber), ref _planNumber, value); }
         }
-        
+
+        Guid _operationId;
+        [Browsable(false)]
+        public Guid OperationId
+        {
+            get { return _operationId; }
+            set { SetPropertyValue(nameof(OperationId), ref _operationId, value); }
+        }
+
         string _operationNumber;
         public string OperationNumber
         {
@@ -41,6 +49,29 @@ namespace MichelTask5.Module.BusinessObjects
             set { SetPropertyValue(nameof(OperationNumber), ref _operationNumber, value); }
         }
         
+        Guid _userId;
+        [Browsable(false)]
+        public Guid UserId
+        {
+            get { return _userId; }
+            set { SetPropertyValue(nameof(UserId), ref _userId, value); }
+        }
+
+        string _userName;
+        public string UserName
+        {
+            get { return _userName; }
+            set { SetPropertyValue(nameof(UserName), ref _userName, value); }
+        }
+
+        Guid? _equipmentId;
+        [Browsable(false)]
+        public Guid? EquipmentId
+        {
+            get { return _equipmentId; }
+            set { SetPropertyValue(nameof(EquipmentId), ref _equipmentId, value); }
+        }
+
         string _equipment;
         public string Equipment
         {

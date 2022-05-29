@@ -29,10 +29,10 @@ namespace MichelTask5.Module.BusinessObjects
 
         DateTime toDate;
         [ImmediatePostData]
-        public DateTime LastDate
+        public DateTime ToDate
         {
             get { return toDate; }
-            set { SetPropertyValue(nameof(toDate), ref toDate, value); }
+            set { SetPropertyValue(nameof(ToDate), ref toDate, value); }
         }
 
         private BindingList<WorkLoadItem> _items = null;
@@ -52,41 +52,7 @@ namespace MichelTask5.Module.BusinessObjects
             }
         }
 
-        [Action(ToolTip = "Generate Work Load", Caption = "Generate Work Load")]
-        public void GenerateWorkLoad()
-        {
-            Items.Clear();
-
-            if (fromDate <= DateTime.MinValue || toDate <= DateTime.MinValue)
-            {
-                return;
-            }
-
-            var collection = Session.GetObjects(Session.GetClassInfo(typeof(M_Plan)), CriteriaOperator.Parse("Active_Plan == 'true' and Plan_Status == 1 and NextDate >= ? and NextDate <= ?", FromDate, toDate), null, 0, false, true);
-            foreach (M_Plan plan in collection)
-            {
-                if (plan.Rolling_Plan)
-                {
-                    var linkPlanNextDate = plan.NextDate;
-
-                    while (linkPlanNextDate <= toDate)
-                    {
-                        var days = GetPeriodInDays(plan);
-                        var workLoadItem = CreateWorkLoadItem(plan, linkPlanNextDate);
-                        Items.Add(workLoadItem);
-
-                        linkPlanNextDate = linkPlanNextDate.AddDays(days);
-                    }
-                }
-                else
-                {
-                    var workLoadItem = CreateWorkLoadItem(plan, null);
-                    Items.Add(workLoadItem);
-                }
-            }
-        }
-
-        private int GetPeriodInDays(M_Plan plan)
+        public int GetPeriodInDays(M_Plan plan)
         {
             int days = 0;
             switch (plan.Period)
@@ -106,7 +72,7 @@ namespace MichelTask5.Module.BusinessObjects
             return days;
         }
 
-        private WorkLoadItem CreateWorkLoadItem(M_Plan plan, DateTime? dueDate)
+        public WorkLoadItem CreateWorkLoadItem(M_Plan plan, string currentUserName, object currentUser, DateTime? dueDate)
         {
             var workLoadItem = new WorkLoadItem(Session)
             {
@@ -115,6 +81,10 @@ namespace MichelTask5.Module.BusinessObjects
                 Equipment = plan.Equipments.FirstOrDefault()?.EquipmentName,
                 DueDate = plan.NextDate,
                 PlanId = plan.Oid,
+                OperationId = plan.Plan_Operation.Oid,
+                EquipmentId = plan.Equipments.FirstOrDefault()?.Oid,
+                UserId = Guid.Parse(currentUser.ToString()),
+                UserName = currentUserName,
                 SeparateWorkOrderPerEquipment = plan.SeparateWorkOrderPerEquipment
             };
             if (dueDate != null)

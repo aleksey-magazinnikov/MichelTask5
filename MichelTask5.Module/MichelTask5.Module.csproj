@@ -46,6 +46,8 @@
     <Reference Include="DevExpress.ExpressApp.ConditionalAppearance.v21.2">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="DevExpress.ExpressApp.Security.v21.2, Version=21.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.ExpressApp.Security.Xpo.v21.2, Version=21.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.ExpressApp.v21.2">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
@@ -97,6 +99,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BusinessObjects\ApplicationUser.cs" />
+    <Compile Include="BusinessObjects\ApplicationUserLoginInfo.cs" />
     <Compile Include="BusinessObjects\CreateWoParameters.cs" />
     <Compile Include="BusinessObjects\Equipment.cs" />
     <Compile Include="BusinessObjects\EquipmentType.cs" />
@@ -124,6 +128,9 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controllers\WorkGenerationViewController.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controllers\WorkLoadViewController.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controllers\Wo_Task_Controller.cs">

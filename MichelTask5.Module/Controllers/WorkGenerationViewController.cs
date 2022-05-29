@@ -15,19 +15,31 @@ namespace MichelTask5.Module.Controllers
 {
     public class WorkGenerationViewController : ViewController
     {
-        private SimpleAction generateWork;
-        
+        private SimpleAction generateWorkOrder;
+        private SimpleAction generateWorkLoad;
+
         public WorkGenerationViewController()
         {
-            TargetViewId = "WorkGeneration_Items_ListView";
+            TargetObjectType = typeof(WorkGeneration);
 
-            generateWork = new SimpleAction(this, "GenerateWorkOrder", PredefinedCategory.Edit)
+            generateWorkOrder = new SimpleAction(this, "GenerateWorkOrder", PredefinedCategory.Edit)
             {
                 SelectionDependencyType = SelectionDependencyType.Independent,
                 Caption = "Generate Work Order",
+                TargetViewId = "WorkGeneration_Items_ListView"
             };
 
-            generateWork.Execute += GenerateWork_Execute;
+            generateWorkOrder.Execute += GenerateWork_Execute;
+
+
+            generateWorkLoad = new SimpleAction(this, "GenerateWorkLoadInWorkGeneration", PredefinedCategory.Edit)
+            {
+                SelectionDependencyType = SelectionDependencyType.Independent,
+                Caption = "Generate Work Load",
+                TargetViewId = "WorkGeneration_DetailView"
+            };
+
+            generateWorkLoad.Execute += GenerateWorkLoad_Execute;
         }
 
         private void GenerateWork_Execute(object sender, SimpleActionExecuteEventArgs e)
@@ -123,6 +135,62 @@ namespace MichelTask5.Module.Controllers
             };
 
             Application.ShowViewStrategy.ShowMessage(options);
+        }
+        private void GenerateWorkLoad_Execute(object sender, SimpleActionExecuteEventArgs e)
+        {
+            if (View.CurrentObject is WorkGeneration workGeneration)
+            {
+                var fromDate = workGeneration.FromDate;
+                var toDate = workGeneration.ToDate;
+                if (fromDate <= DateTime.MinValue || toDate <= DateTime.MinValue)
+                {
+                    return;
+                }
+
+                var objectSpace = View.ObjectSpace;
+                workGeneration.Items.Clear();
+                DeleteAllWorkLoadItems(objectSpace);
+
+                var os = Application.CreateObjectSpace(typeof(WorkLoad));
+                var collection = os.GetObjects<M_Plan>(CriteriaOperator.Parse(
+                    "Active_Plan == 'true' and Plan_Status == 1 and NextDate >= ? and NextDate <= ?",
+                    fromDate, toDate));
+                foreach (M_Plan plan in collection)
+                {
+                    if (plan.Rolling_Plan)
+                    {
+                        var linkPlanNextDate = plan.NextDate;
+
+                        while (linkPlanNextDate <= toDate)
+                        {
+                            var days = workGeneration.GetPeriodInDays(plan);
+                            var workLoadItem = workGeneration.CreateWorkLoadItem(plan, SecuritySystem.CurrentUserName, SecuritySystem.CurrentUserId, linkPlanNextDate);
+                            workGeneration.Items.Add(workLoadItem);
+
+                            linkPlanNextDate = linkPlanNextDate.AddDays(days);
+                        }
+                    }
+                    else
+                    {
+                        var workLoadItem = workGeneration.CreateWorkLoadItem(plan, SecuritySystem.CurrentUserName, SecuritySystem.CurrentUserId, null);
+                        workGeneration.Items.Add(workLoadItem);
+                    }
+                }
+
+                objectSpace.CommitChanges();
+            }
+        }
+
+        private static void DeleteAllWorkLoadItems(IObjectSpace os)
+        {
+            var colDelete = os.GetObjects<WorkLoadItem>(CriteriaOperator.Parse("UserId = ?",
+                SecuritySystem.CurrentUserId));
+            foreach (var item in colDelete.ToList())
+            {
+                item.Delete();
+            }
+
+            os.CommitChanges();
         }
 
         private static WoTask CreateWoTask(IObjectSpace os, M_Operation operation, Equipment equipment, WorkLoadItem obj,
