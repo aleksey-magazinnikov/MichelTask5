@@ -19,21 +19,19 @@ namespace MichelTask5.Module.BusinessObjects
             get { return _planId; }
             set { SetPropertyValue(nameof(PlanId), ref _planId, value); }
         }
-        
-        Guid _workGenerationId;
-        [Browsable(false)]
-        public Guid WorkGenerationId
+
+        WorkGeneration _workGeneration;
+        public WorkGeneration WorkGeneration
         {
-            get { return _workGenerationId; }
-            set { SetPropertyValue(nameof(WorkGenerationId), ref _workGenerationId, value); }
+            get { return _workGeneration; }
+            set { SetPropertyValue(nameof(WorkGeneration), ref _workGeneration, value); }
         }
-        
-        Guid _workOrderId;
-        [Browsable(false)]
-        public Guid WorkOrderId
+
+        Work_Order _workOrder;
+        public Work_Order WorkOrder
         {
-            get { return _workOrderId; }
-            set { SetPropertyValue(nameof(WorkOrderId), ref _workOrderId, value); }
+            get { return _workOrder; }
+            set { SetPropertyValue(nameof(WorkOrder), ref _workOrder, value); }
         }
 
         string _planNumber;

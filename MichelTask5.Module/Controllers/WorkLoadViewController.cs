@@ -43,8 +43,7 @@ namespace MichelTask5.Module.Controllers
                 workLoad.Items.Clear();
                 DeleteAllWorkLoadItems(objectSpace);
 
-                var os = Application.CreateObjectSpace(typeof(WorkLoad));
-                var collection = os.GetObjects<PlanEquipmentLink>(CriteriaOperator.Parse(
+                var collection = objectSpace.GetObjects<PlanEquipmentLink>(CriteriaOperator.Parse(
                     "LinkPlan.Active_Plan == 'true' and LinkPlan.Plan_Status == 1 and LinkPlan.NextDate >= ? and LinkPlan.NextDate <= ?",
                     fromDate, toDate));
                 foreach (PlanEquipmentLink link in collection)

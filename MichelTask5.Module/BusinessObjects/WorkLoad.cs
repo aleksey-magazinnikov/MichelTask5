@@ -103,6 +103,7 @@ namespace MichelTask5.Module.BusinessObjects
                 EquipmentId = link.LinkEquipment.Oid,
                 UserId = Guid.Parse(currentUser.ToString()),
                 UserName = currentUserName,
+                WorkLoad = this,
                 SeparateWorkOrderPerEquipment = link.LinkPlan.SeparateWorkOrderPerEquipment
             };
             if (dueDate != null)

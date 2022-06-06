@@ -150,7 +150,7 @@ namespace MichelTask5.Module.BusinessObjects
         }
 
         public WorkGenerationItem CreateWorkGenerationItem(M_Plan plan, string currentUserName, object currentUser,
-            Guid workOrderOid)
+            Work_Order workOrder)
         {
             var workGenerationItem = new WorkGenerationItem(Session)
             {
@@ -160,8 +160,8 @@ namespace MichelTask5.Module.BusinessObjects
                 OperationId = plan.Plan_Operation.Oid,
                 UserId = Guid.Parse(currentUser.ToString()),
                 UserName = currentUserName,
-                WorkOrderId = workOrderOid,
-                WorkGenerationId = this.Oid
+                WorkOrder = workOrder,
+                WorkGeneration = this
             };
 
             workGenerationItem.Save();

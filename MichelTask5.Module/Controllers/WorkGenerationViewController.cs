@@ -75,8 +75,7 @@ namespace MichelTask5.Module.Controllers
 
                         foreach (WorkLoadItem obj in objectsToProcess)
                         {
-                            var os = Application.CreateObjectSpace(typeof(Work_Order));
-                            var plan = os.GetObjectByKey<M_Plan>(obj.PlanId);
+                            var plan = objectSpace.GetObjectByKey<M_Plan>(obj.PlanId);
 
                             if (plan.SeparateWorkOrderPerEquipment && plan.Equipments.Any())
                             {
@@ -84,8 +83,8 @@ namespace MichelTask5.Module.Controllers
 
                                 foreach (var equipment in plan.Equipments)
                                 {
-                                    var workOrder = CreateWorkOrder(os, plan, obj, out var operation);
-                                    var woTask = CreateWoTask(os, operation, equipment, obj, taskNumber);
+                                    var workOrder = CreateWorkOrder(objectSpace, plan, obj, out var operation);
+                                    var woTask = CreateWoTask(objectSpace, operation, equipment, obj, taskNumber);
 
                                     workOrder.Tasks.Add(woTask);
 
@@ -94,18 +93,18 @@ namespace MichelTask5.Module.Controllers
                                     workOrder.Save();
                                     var workGenerationItem = workGeneration.CreateWorkGenerationItem(plan,
                                         SecuritySystem.CurrentUserName,
-                                        SecuritySystem.CurrentUserId, workOrder.Oid);
+                                        SecuritySystem.CurrentUserId, workOrder);
                                     workGeneration.ListOfGeneratedWorkOrders.Add(workGenerationItem);
                                 }
                             }
                             else
                             {
-                                var workOrder = CreateWorkOrder(os, plan, obj, out var operation);
+                                var workOrder = CreateWorkOrder(objectSpace, plan, obj, out var operation);
 
                                 var taskNumber = 1;
                                 foreach (var equipment in plan.Equipments)
                                 {
-                                    var woTask = CreateWoTask(os, operation, equipment, obj, taskNumber);
+                                    var woTask = CreateWoTask(objectSpace, operation, equipment, obj, taskNumber);
 
                                     workOrder.Tasks.Add(woTask);
                                     taskNumber++;
@@ -114,7 +113,7 @@ namespace MichelTask5.Module.Controllers
                                 workOrder.Save();
                                 var workGenerationItem = workGeneration.CreateWorkGenerationItem(plan,
                                     SecuritySystem.CurrentUserName,
-                                    SecuritySystem.CurrentUserId, workOrder.Oid);
+                                    SecuritySystem.CurrentUserId, workOrder);
                                 workGeneration.ListOfGeneratedWorkOrders.Add(workGenerationItem);
                             }
 
@@ -134,7 +133,6 @@ namespace MichelTask5.Module.Controllers
                             plan.LastDate = DateTime.Today;
                             plan.NextDate = GetNextDate(plan);
 
-                            os.CommitChanges();
                             objectSpace.CommitChanges();
                         }
 
@@ -172,20 +170,19 @@ namespace MichelTask5.Module.Controllers
                 workGeneration.Items.Clear();
                 DeleteAllWorkLoadItems(objectSpace);
 
-                var os = Application.CreateObjectSpace(typeof(WorkLoad));
-                var collection = os.GetObjects<M_Plan>(CriteriaOperator.Parse(
-                    "Active_Plan == 'true' and Plan_Status == 1 and NextDate >= ? and NextDate <= ?",
+                var collection = objectSpace.GetObjects<PlanEquipmentLink>(CriteriaOperator.Parse(
+                    "LinkPlan.Active_Plan == 'true' and LinkPlan.Plan_Status == 1 and LinkPlan.NextDate >= ? and LinkPlan.NextDate <= ?",
                     fromDate, toDate));
-                foreach (M_Plan plan in collection)
+                foreach (PlanEquipmentLink link in collection)
                 {
-                    if (plan.Rolling_Plan)
+                    if (link.LinkPlan.Rolling_Plan)
                     {
-                        var linkPlanNextDate = plan.NextDate;
+                        var linkPlanNextDate = link.LinkPlan.NextDate;
 
                         while (linkPlanNextDate <= toDate)
                         {
-                            var days = workGeneration.GetPeriodInDays(plan);
-                            var workLoadItem = workGeneration.CreateWorkLoadItem(plan, SecuritySystem.CurrentUserName, SecuritySystem.CurrentUserId, linkPlanNextDate);
+                            var days = workGeneration.GetPeriodInDays(link.LinkPlan);
+                            var workLoadItem = workGeneration.CreateWorkLoadItem(link.LinkPlan, SecuritySystem.CurrentUserName, SecuritySystem.CurrentUserId, linkPlanNextDate);
                             workGeneration.Items.Add(workLoadItem);
 
                             linkPlanNextDate = linkPlanNextDate.AddDays(days);
@@ -193,7 +190,7 @@ namespace MichelTask5.Module.Controllers
                     }
                     else
                     {
-                        var workLoadItem = workGeneration.CreateWorkLoadItem(plan, SecuritySystem.CurrentUserName, SecuritySystem.CurrentUserId, null);
+                        var workLoadItem = workGeneration.CreateWorkLoadItem(link.LinkPlan, SecuritySystem.CurrentUserName, SecuritySystem.CurrentUserId, null);
                         workGeneration.Items.Add(workLoadItem);
                     }
                 }

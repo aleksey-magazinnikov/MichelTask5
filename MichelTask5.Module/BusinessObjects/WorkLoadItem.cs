@@ -78,6 +78,20 @@ namespace MichelTask5.Module.BusinessObjects
             get { return _dueDate; }
             set { SetPropertyValue(nameof(DueDate), ref _dueDate, value); }
         }
+        
+        WorkLoad _workLoad;
+        public WorkLoad WorkLoad
+        {
+            get { return _workLoad; }
+            set { SetPropertyValue(nameof(WorkLoad), ref _workLoad, value); }
+        }
+        
+        WorkGeneration _workGeneration;
+        public WorkGeneration WorkGeneration
+        {
+            get { return _workGeneration; }
+            set { SetPropertyValue(nameof(WorkGeneration), ref _workGeneration, value); }
+        }
 
         private bool separateWorkOrderPerEquipment;
         public bool SeparateWorkOrderPerEquipment
