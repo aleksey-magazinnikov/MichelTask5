@@ -215,19 +215,23 @@ namespace MichelTask5.Module.Controllers
             int taskNumber)
         {
             var woTask = os.CreateObject<WoTask>();
-            woTask.WorkHours = operation.OperationDuration;
-            woTask.WorkType = operation.WorkType;
-            woTask.AssignedTo = operation.Operation_unit;
+            if (operation != null)
+            {
+                woTask.WorkHours = operation.OperationDuration;
+                woTask.WorkType = operation.WorkType;
+                woTask.AssignedTo = operation.Operation_unit;
+                woTask.TaskDescription = operation.Operation_Description;
+
+                if (operation.Operation_unit != null)
+                {
+                    woTask.Subject = operation.Operation_Name + " " + operation.Operation_unit.Work_Unit_Name;
+                }
+            }
+
             woTask.EquipmentTask = equipment;
-            woTask.TaskDescription = operation.Operation_Description;
             woTask.PlannedEndDate = obj.DueDate;
             woTask.PlannedStartDate = obj.DueDate;
             woTask.TaskNumber = taskNumber;
-
-            if (operation.Operation_unit != null)
-            {
-                woTask.Subject = operation.Operation_Name + " " + operation.Operation_unit.Work_Unit_Name;
-            }
 
             return woTask;
         }
@@ -238,14 +242,14 @@ namespace MichelTask5.Module.Controllers
             operation = plan.Plan_Operation;
 
             workOrder.Operation = operation;
-            workOrder.Work_Request = operation.Operation_Name;
-            workOrder.Prefix = operation.Prefix;
+            workOrder.Work_Request = operation != null ? operation.Operation_Name : String.Empty;
+            workOrder.Prefix = operation?.Prefix;
             workOrder.Site = plan.Site;
             workOrder.Plan = plan;
             workOrder.PlannedEndDate = obj.DueDate;
             workOrder.PlannedStartDate = obj.DueDate;
             workOrder.DuetDate = obj.DueDate;
-            workOrder.Request_Description = operation.Operation_Description;
+            workOrder.Request_Description = operation?.Operation_Description;
             workOrder.Work_orderDate = DateTime.Today;
             
             return workOrder;

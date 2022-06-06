@@ -72,18 +72,21 @@ namespace MichelTask5.Module.BusinessObjects
         public int GetPeriodInDays(PlanEquipmentLink link)
         {
             int days = 0;
-            switch (link.LinkPlan.Period)
+            if (link != null)
             {
-                case PeriodType.Days:
-                    days = link.LinkPlan.Number;
-                    break;
+                switch (link.LinkPlan.Period)
+                {
+                    case PeriodType.Days:
+                        days = link.LinkPlan.Number;
+                        break;
 
-                case PeriodType.Weeks:
-                    days = link.LinkPlan.Number * 7;
-                    break;
-                case PeriodType.Months:
-                    days = (link.LinkPlan.NextDate - link.LinkPlan.BaseDate).Days;
-                    break;
+                    case PeriodType.Weeks:
+                        days = link.LinkPlan.Number * 7;
+                        break;
+                    case PeriodType.Months:
+                        days = (link.LinkPlan.NextDate - link.LinkPlan.BaseDate).Days;
+                        break;
+                }
             }
 
             return days;
@@ -94,17 +97,17 @@ namespace MichelTask5.Module.BusinessObjects
         {
             var workLoadItem = new WorkLoadItem(Session)
             {
-                PlanNumber = link.LinkPlan.M_Plan_Num,
-                OperationNumber = link.Operation.M_Operation_Num,
+                PlanNumber = link.LinkPlan != null ? link.LinkPlan.M_Plan_Num : String.Empty,
+                OperationNumber = link.Operation != null ? link.Operation.M_Operation_Num : String.Empty,
                 Equipment = link.LinkEquipment.EquipmentName,
-                DueDate = link.LinkPlan.NextDate,
-                PlanId = link.LinkPlan.Oid,
-                OperationId = link.Operation.Oid,
-                EquipmentId = link.LinkEquipment.Oid,
+                DueDate = link.LinkPlan?.NextDate ?? DateTime.MinValue,
+                PlanId = link.LinkPlan?.Oid ?? Guid.Empty,
+                OperationId = link.Operation?.Oid ?? Guid.Empty,
+                EquipmentId = link.LinkEquipment?.Oid ?? Guid.Empty,
                 UserId = Guid.Parse(currentUser.ToString()),
                 UserName = currentUserName,
                 WorkLoad = this,
-                SeparateWorkOrderPerEquipment = link.LinkPlan.SeparateWorkOrderPerEquipment
+                SeparateWorkOrderPerEquipment = link.LinkPlan?.SeparateWorkOrderPerEquipment ?? false
             };
             if (dueDate != null)
             {

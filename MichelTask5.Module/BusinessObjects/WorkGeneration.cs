@@ -126,14 +126,19 @@ namespace MichelTask5.Module.BusinessObjects
         public WorkLoadItem CreateWorkLoadItem(M_Plan plan, string currentUserName, object currentUser,
             DateTime? dueDate)
         {
+            if (plan == null)
+            {
+                return null;
+            }
+
             var workLoadItem = new WorkLoadItem(Session)
             {
                 PlanNumber = plan.M_Plan_Num,
-                OperationNumber = plan.Plan_Operation.M_Operation_Num,
+                OperationNumber = plan.Plan_Operation != null ? plan.Plan_Operation.M_Operation_Num : String.Empty ,
                 Equipment = plan.Equipments.FirstOrDefault()?.EquipmentName,
                 DueDate = plan.NextDate,
                 PlanId = plan.Oid,
-                OperationId = plan.Plan_Operation.Oid,
+                OperationId = plan.Plan_Operation?.Oid ?? Guid.Empty,
                 EquipmentId = plan.Equipments.FirstOrDefault()?.Oid,
                 UserId = Guid.Parse(currentUser.ToString()),
                 UserName = currentUserName,
@@ -155,9 +160,9 @@ namespace MichelTask5.Module.BusinessObjects
             var workGenerationItem = new WorkGenerationItem(Session)
             {
                 PlanNumber = plan.M_Plan_Num,
-                OperationNumber = plan.Plan_Operation.M_Operation_Num,
+                OperationNumber = plan.Plan_Operation != null ? plan.Plan_Operation.M_Operation_Num : String.Empty,
                 PlanId = plan.Oid,
-                OperationId = plan.Plan_Operation.Oid,
+                OperationId = plan.Plan_Operation?.Oid ?? Guid.Empty,
                 UserId = Guid.Parse(currentUser.ToString()),
                 UserName = currentUserName,
                 WorkOrder = workOrder,
