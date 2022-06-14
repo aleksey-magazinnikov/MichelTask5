@@ -166,6 +166,14 @@ namespace MichelTask5.Module.BusinessObjects
             set { SetPropertyValue(nameof(Active_Equipment), ref active_Equipment, value); }
         }
 
+        private Counter counter;
+        [Association("Equip_Counter")]
+        public Counter Counter
+        {
+            get { return counter; }
+            set { SetPropertyValue(nameof(Counter), ref counter, value); }
+        }
+
         [Association, Browsable(false)]
         public IList<PlanEquipmentLink> PlanEquipmentLinks => GetList<PlanEquipmentLink>(nameof(PlanEquipmentLinks));
 

@@ -93,6 +93,22 @@ namespace MichelTask5.Module.BusinessObjects
             get { return active_Plan; }
             set { SetPropertyValue(nameof(Active_Plan), ref active_Plan, value); }
         }
+
+        private bool freeze_Plan;
+        public bool Freez_Plan
+        {
+            get { return freeze_Plan; }
+            set { SetPropertyValue(nameof(Freez_Plan), ref freeze_Plan, value); }
+        }
+
+        private bool superpose_Plan;
+        public bool Superpose_Plan
+        {
+            get { return superpose_Plan; }
+            set { SetPropertyValue(nameof(Superpose_Plan), ref superpose_Plan, value); }
+        }
+
+
         DateTime baseDate;
         public DateTime BaseDate
         {

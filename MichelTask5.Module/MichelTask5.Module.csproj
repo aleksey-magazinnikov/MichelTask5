@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MichelTask5.Module</RootNamespace>
     <AssemblyName>MichelTask5.Module</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -101,7 +101,10 @@
   <ItemGroup>
     <Compile Include="BusinessObjects\ApplicationUser.cs" />
     <Compile Include="BusinessObjects\ApplicationUserLoginInfo.cs" />
+    <Compile Include="BusinessObjects\Counter.cs" />
+    <Compile Include="BusinessObjects\Counter_Values.cs" />
     <Compile Include="BusinessObjects\CreateWoParameters.cs" />
+    <Compile Include="BusinessObjects\C_Plan.cs" />
     <Compile Include="BusinessObjects\Equipment.cs" />
     <Compile Include="BusinessObjects\EquipmentType.cs" />
     <Compile Include="BusinessObjects\Location.cs" />
