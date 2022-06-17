@@ -247,7 +247,7 @@ namespace MichelTask5.Module.BusinessObjects
             if (plan != null && Status == WoTaskStatus.Completed)
             {
                 plan.Plan_Status = 1;
-                if (!plan.Rolling_Plan)
+                if (plan.PlanType != PlanType.Rolling)
                 {
                     plan.BaseDate = fEndDate;
                     plan.NextDate = GetNextDate(plan);

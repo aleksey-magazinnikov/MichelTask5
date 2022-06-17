@@ -118,7 +118,7 @@ namespace MichelTask5.Module.Controllers
                             }
 
                             plan.Plan_Status = 2;
-                            if (!plan.Rolling_Plan)
+                            if (plan.PlanType != PlanType.Rolling)
                             {
                                 plan.BaseDate = DateTime.Today;
                             }
@@ -175,7 +175,7 @@ namespace MichelTask5.Module.Controllers
                     fromDate, toDate));
                 foreach (PlanEquipmentLink link in collection)
                 {
-                    if (link.LinkPlan.Rolling_Plan)
+                    if (link.LinkPlan.PlanType == PlanType.Rolling)
                     {
                         var linkPlanNextDate = link.LinkPlan.NextDate;
 

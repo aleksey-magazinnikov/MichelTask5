@@ -144,12 +144,13 @@ namespace MichelTask5.Module.BusinessObjects
             set { SetPropertyValue(nameof(Plan_Status), ref plan_Status, value); }
         }
 
-        private bool rolling_Plan;
-        public bool Rolling_Plan
+        private PlanType planType;
+        public PlanType PlanType
         {
-            get { return rolling_Plan; }
-            set { SetPropertyValue(nameof(Rolling_Plan), ref rolling_Plan, value); }
+            get { return planType; }
+            set { SetPropertyValue(nameof(PlanType), ref planType, value); }
         }
+
         M_Operation plan_Operation;
         [ImmediatePostData]
         public M_Operation Plan_Operation
@@ -243,5 +244,11 @@ namespace MichelTask5.Module.BusinessObjects
         Days = 1,
         Weeks = 2,
         Months = 3
+    }
+
+    public enum PlanType
+    {
+        Rolling = 0,
+        Sequential = 1
     }
 }

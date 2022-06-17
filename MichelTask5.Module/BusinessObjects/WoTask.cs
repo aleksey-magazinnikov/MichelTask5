@@ -12,8 +12,6 @@ using DevExpress.Xpo;
 namespace MichelTask5.Module.BusinessObjects
 {
     [NavigationItem("Maintenance")]
-    //
-    // ...
     [Appearance("Completed1", TargetItems = "Subject",
         Criteria = "Status = 'Completed'", FontStyle = FontStyle.Strikeout, FontColor = "ForestGreen")]
     [Appearance("Completed2", TargetItems = "*;Status;AssignedTo",
@@ -23,7 +21,6 @@ namespace MichelTask5.Module.BusinessObjects
     [Appearance("Deferred", TargetItems = "Subject",
         Criteria = "Status = 'Deferred'", BackColor = "MistyRose")]
     [RuleCriteria("EndDate >= StartDate")]
-    //
     public class WoTask : BaseObject
     {
         public WoTask(Session session) : base(session)
