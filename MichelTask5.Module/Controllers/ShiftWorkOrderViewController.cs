@@ -69,7 +69,7 @@ namespace MichelTask5.Module.Controllers
 
                     workOrder.PlannedEndDate = parameters.DateTime;
                     workOrder.PlannedStartDate = parameters.DateTime;
-                    workOrder.DuetDate = parameters.DateTime;
+                    workOrder.DueDate = parameters.DateTime;
 
                     foreach (var task in workOrder.Tasks)
                     {

@@ -171,7 +171,7 @@ namespace MichelTask5.Module.Controllers
                 DeleteAllWorkLoadItems(objectSpace);
 
                 var collection = objectSpace.GetObjects<PlanEquipmentLink>(CriteriaOperator.Parse(
-                    "LinkPlan.Active_Plan == 'true' and LinkPlan.Plan_Status == 1 and LinkPlan.NextDate >= ? and LinkPlan.NextDate <= ?",
+                    "LinkPlan.Active_Plan == 'true' and LinkPlan.Freez_Plan == 'false' and LinkPlan.Plan_Status == 1 and LinkPlan.NextDate >= ? and LinkPlan.NextDate <= ?",
                     fromDate, toDate));
                 foreach (PlanEquipmentLink link in collection)
                 {
@@ -248,7 +248,7 @@ namespace MichelTask5.Module.Controllers
             workOrder.Plan = plan;
             workOrder.PlannedEndDate = obj.DueDate;
             workOrder.PlannedStartDate = obj.DueDate;
-            workOrder.DuetDate = obj.DueDate;
+            workOrder.DueDate = obj.DueDate;
             workOrder.Request_Description = operation?.Operation_Description;
             workOrder.Work_orderDate = DateTime.Today;
             

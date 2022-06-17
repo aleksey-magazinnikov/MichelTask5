@@ -12,14 +12,11 @@ using DevExpress.Xpo;
 
 namespace MichelTask5.Module.BusinessObjects
 {
-    [Appearance("Completed1", TargetItems = "Work_Request",
-    Criteria = "Status = 'Completed'", FontStyle = FontStyle.Strikeout, FontColor = "ForestGreen")]
-    [Appearance("Completed2", TargetItems = "*;Status;AssignedToDepartment",
-    Criteria = "Status = 'Completed'", Enabled = false)]
-    [Appearance("InProgress", TargetItems = "Work_Request;AssignedToDepartment",
-    Criteria = "Status = 'InProgress'", BackColor = "LemonChiffon")]
-    [Appearance("Deferred", TargetItems = "Work_Request",
-    Criteria = "Status = 'Deferred'", BackColor = "MistyRose")]
+    [Appearance("Completed1", TargetItems = "Work_Request", Criteria = "Status = 'Completed'", FontStyle = FontStyle.Strikeout, FontColor = "ForestGreen")]
+    [Appearance("Completed2", TargetItems = "*;Status;AssignedToDepartment", Criteria = "Status = 'Completed'", Enabled = false)]
+    [Appearance("InProgress", TargetItems = "Work_Request;AssignedToDepartment", Criteria = "Status = 'InProgress'", BackColor = "LemonChiffon")]
+    [Appearance("Deferred", TargetItems = "Work_Request", Criteria = "Status = 'Deferred'", BackColor = "MistyRose")]
+    [Appearance("NotCompleted", TargetItems = "Work_Request", Criteria = "Status != 'Completed' and DueDate < Today()", FontColor = "Red")]
     [NavigationItem("Maintenance")]
     [RuleCriteria("EndDate >= StartDate")]
     public class Work_Order :BaseObject
@@ -44,6 +41,8 @@ namespace MichelTask5.Module.BusinessObjects
             get { return GetCollection<WoTask>(nameof(Tasks)); }
         }
         WorkDepartment assignedToDepartment;
+        
+        [ImmediatePostData(true)]
         public WorkDepartment AssignedToDepartment
         {
             get { return assignedToDepartment; }
@@ -148,10 +147,10 @@ namespace MichelTask5.Module.BusinessObjects
         }
 
         DateTime dueDate;
-        public DateTime DuetDate
+        public DateTime DueDate
         {
             get { return dueDate; }
-            set { SetPropertyValue(nameof(DuetDate), ref dueDate, value); }
+            set { SetPropertyValue(nameof(DueDate), ref dueDate, value); }
         }
 
         private DateTime fPlannedEndDate;
