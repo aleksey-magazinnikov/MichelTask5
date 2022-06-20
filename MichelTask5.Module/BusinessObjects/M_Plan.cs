@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using DevExpress.Data.Filtering;
 using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.ConditionalAppearance;
+using DevExpress.ExpressApp.Editors;
 using DevExpress.ExpressApp.Model;
 using DevExpress.ExpressApp.Security;
 using DevExpress.Persistent.Base;
@@ -102,20 +104,68 @@ namespace MichelTask5.Module.BusinessObjects
         }
 
         private bool superpose_Plan;
+        [ImmediatePostData(true)]
         public bool Superpose_Plan
         {
             get { return superpose_Plan; }
-            set { SetPropertyValue(nameof(Superpose_Plan), ref superpose_Plan, value); }
+            set
+            {
+                bool modified = SetPropertyValue(nameof(Superpose_Plan), ref superpose_Plan, value);
+                if (!IsLoading && !IsSaving && modified && !value)
+                {
+                    SuperposedPlan = null;
+                }
+            }
+        }
+        
+        private M_Plan superposedPlan;
+        [Appearance("SuperposedPlanHiden", Visibility = ViewItemVisibility.ShowEmptySpace, Criteria = "Superpose_Plan == false", Context = "DetailView")]
+        [DataSourceProperty(nameof(AvailablePlans), DataSourcePropertyIsNullMode.SelectNothing)]
+        public M_Plan SuperposedPlan
+        {
+            get { return superposedPlan; }
+            set { SetPropertyValue(nameof(SuperposedPlan), ref superposedPlan, value); }
         }
 
+        private XPCollection<M_Plan> fAvailablePlans;
+        [Browsable(false)]
+        public XPCollection<M_Plan> AvailablePlans
+        {
+            get
+            {
+                if (fAvailablePlans == null)
+                {
+                    fAvailablePlans = new XPCollection<M_Plan>(Session);
+                    RefreshAvailablePlans();
+                }
+                return fAvailablePlans;
+            }
+        }
 
-        DateTime baseDate;
+        private void RefreshAvailablePlans()
+        {
+            if (fAvailablePlans == null)
+                return;
+            if (Equipments.Count > 0)
+            {
+                var equipmentOids = Equipments.Select(c => c.Oid).ToList();
+                fAvailablePlans.Criteria = new GroupOperator(GroupOperatorType.And,
+                    new ContainsOperator("Equipments", new InOperator("Oid", equipmentOids)),
+                    CriteriaOperator.Parse("Oid != ?", this.Oid));
+            }
+            else
+            {
+                fAvailablePlans.Criteria = null;
+            }
+        }
+
+        private DateTime baseDate;
         public DateTime BaseDate
         {
             get { return baseDate; }
             set
             {
-                bool modified = SetPropertyValue(nameof(baseDate), ref baseDate, value);
+                bool modified = SetPropertyValue(nameof(BaseDate), ref baseDate, value);
                 if (!IsLoading && !IsSaving && modified && period != PeriodType.NotSelected)
                 {
                     RecalculateDatesForPeriod(period);
@@ -123,20 +173,22 @@ namespace MichelTask5.Module.BusinessObjects
                 }
             }
         }
-        DateTime nextDate;
+
+        private DateTime nextDate;
         public DateTime NextDate
         {
             get { return nextDate; }
-            set { SetPropertyValue(nameof(nextDate), ref nextDate, value); }
+            set { SetPropertyValue(nameof(NextDate), ref nextDate, value); }
         }
-        DateTime lastDate;
+
+        private DateTime lastDate;
         public DateTime LastDate
         {
             get { return lastDate; }
-            set { SetPropertyValue(nameof(lastDate), ref lastDate, value); }
+            set { SetPropertyValue(nameof(LastDate), ref lastDate, value); }
         }
-        int plan_Status;
-      
+
+        private int plan_Status;
         [Size(1), ModelDefault("AllowEdit", "False")]
         public int Plan_Status
         {
@@ -144,28 +196,47 @@ namespace MichelTask5.Module.BusinessObjects
             set { SetPropertyValue(nameof(Plan_Status), ref plan_Status, value); }
         }
 
-        private PlanType planType;
-        public PlanType PlanType
+        private FrequencyType frequencyType;
+        public FrequencyType FrequencyType
         {
-            get { return planType; }
-            set { SetPropertyValue(nameof(PlanType), ref planType, value); }
+            get { return frequencyType; }
+            set { SetPropertyValue(nameof(FrequencyType), ref frequencyType, value); }
         }
 
-        M_Operation plan_Operation;
+        private M_Operation plan_Operation;
         [ImmediatePostData]
         public M_Operation Plan_Operation
         {
             get { return plan_Operation; }
             set { SetPropertyValue(nameof(Plan_Operation), ref plan_Operation, value); }
         }
-        WorkSite site;
+        
+        private PlanGroup planGroup;
+        [ImmediatePostData]
+        public PlanGroup PlanGroup
+        {
+            get { return planGroup; }
+            set
+            {
+                bool modified = SetPropertyValue(nameof(PlanGroup), ref planGroup, value);
+                if (!IsLoading && !IsSaving && modified && value.Equipment != null)
+                {
+                    if (!Equipments.Contains(value.Equipment))
+                    {
+                        Equipments.Add(value.Equipment);
+                    }
+                }
+            }
+        }
+
+        private WorkSite site;
         public WorkSite Site
         {
             get { return site; }
             set { SetPropertyValue(nameof(Site), ref site, value); }
         }
 
-        PeriodType period;
+        private PeriodType period;
         [ImmediatePostData]
         public PeriodType Period
         {
@@ -191,7 +262,7 @@ namespace MichelTask5.Module.BusinessObjects
             }
         }
 
-        int number;
+        private int number;
         [Size(3), Custom("Caption", " ")]
         [Appearance("NumberDisabled", Enabled = false, Criteria = "Period == 0", Context = "DetailView")]
         public int Number
@@ -246,9 +317,10 @@ namespace MichelTask5.Module.BusinessObjects
         Months = 3
     }
 
-    public enum PlanType
+    public enum FrequencyType
     {
-        Rolling = 0,
-        Sequential = 1
+        Regular = 0,
+        Rolling = 1,
+        Sequential = 2
     }
 }

@@ -48,7 +48,7 @@ namespace MichelTask5.Module.Controllers
                     fromDate, toDate));
                 foreach (PlanEquipmentLink link in collection)
                 {
-                    if (link.LinkPlan.PlanType == PlanType.Rolling)
+                    if (link.LinkPlan.FrequencyType == FrequencyType.Rolling || link.LinkPlan.FrequencyType == FrequencyType.Sequential)
                     {
                         var linkPlanNextDate = link.LinkPlan.NextDate;
 

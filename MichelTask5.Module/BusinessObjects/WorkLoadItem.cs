@@ -99,5 +99,12 @@ namespace MichelTask5.Module.BusinessObjects
             get { return separateWorkOrderPerEquipment; }
             set { SetPropertyValue(nameof(SeparateWorkOrderPerEquipment), ref separateWorkOrderPerEquipment, value); }
         }
+        
+        private bool sequential;
+        public bool Sequential
+        {
+            get { return sequential; }
+            set { SetPropertyValue(nameof(Sequential), ref sequential, value); }
+        }
     }
 }

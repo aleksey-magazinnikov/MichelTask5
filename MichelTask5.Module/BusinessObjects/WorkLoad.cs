@@ -107,7 +107,8 @@ namespace MichelTask5.Module.BusinessObjects
                 UserId = Guid.Parse(currentUser.ToString()),
                 UserName = currentUserName,
                 WorkLoad = this,
-                SeparateWorkOrderPerEquipment = link.LinkPlan?.SeparateWorkOrderPerEquipment ?? false
+                SeparateWorkOrderPerEquipment = link.LinkPlan?.SeparateWorkOrderPerEquipment ?? false,
+                Sequential = link.LinkPlan != null && link.LinkPlan.FrequencyType == FrequencyType.Sequential
             };
             if (dueDate != null)
             {

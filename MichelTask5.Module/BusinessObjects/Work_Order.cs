@@ -132,10 +132,7 @@ namespace MichelTask5.Module.BusinessObjects
         private DateTime plannedstartDate;
         public DateTime PlannedStartDate
         {
-            get
-            {
-                return plannedstartDate;
-            }
+            get { return plannedstartDate; }
             set { SetPropertyValue(nameof(PlannedStartDate), ref plannedstartDate, value); }
         }
 
@@ -156,10 +153,7 @@ namespace MichelTask5.Module.BusinessObjects
         private DateTime fPlannedEndDate;
         public DateTime PlannedEndDate
         {
-            get
-            {
-                return fPlannedEndDate;
-            }
+            get { return fPlannedEndDate; }
             set { SetPropertyValue(nameof(PlannedEndDate), ref fPlannedEndDate, value); }
         }
 
@@ -247,7 +241,7 @@ namespace MichelTask5.Module.BusinessObjects
             if (plan != null && Status == WoTaskStatus.Completed)
             {
                 plan.Plan_Status = 1;
-                if (plan.PlanType != PlanType.Rolling)
+                if (plan.FrequencyType == FrequencyType.Regular)
                 {
                     plan.BaseDate = fEndDate;
                     plan.NextDate = GetNextDate(plan);

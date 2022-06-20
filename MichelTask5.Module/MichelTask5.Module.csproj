@@ -112,6 +112,7 @@
     <Compile Include="BusinessObjects\M_Plan.cs" />
     <Compile Include="BusinessObjects\Ope_Equ.cs" />
     <Compile Include="BusinessObjects\PlanEquipmentLink.cs" />
+    <Compile Include="BusinessObjects\PlanGroup.cs" />
     <Compile Include="BusinessObjects\ShiftWoParameters.cs" />
     <Compile Include="BusinessObjects\WorkDepartment.cs" />
     <Compile Include="BusinessObjects\WorkGeneration.cs" />

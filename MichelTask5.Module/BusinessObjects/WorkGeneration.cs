@@ -123,26 +123,27 @@ namespace MichelTask5.Module.BusinessObjects
             return days;
         }
 
-        public WorkLoadItem CreateWorkLoadItem(M_Plan plan, string currentUserName, object currentUser,
+        public WorkLoadItem CreateWorkLoadItem(PlanEquipmentLink link, string currentUserName, object currentUser,
             DateTime? dueDate)
         {
-            if (plan == null)
+            if (link.LinkPlan == null)
             {
                 return null;
             }
 
             var workLoadItem = new WorkLoadItem(Session)
             {
-                PlanNumber = plan.M_Plan_Num,
-                OperationNumber = plan.Plan_Operation != null ? plan.Plan_Operation.M_Operation_Num : String.Empty ,
-                Equipment = plan.Equipments.FirstOrDefault()?.EquipmentName,
-                DueDate = plan.NextDate,
-                PlanId = plan.Oid,
-                OperationId = plan.Plan_Operation?.Oid ?? Guid.Empty,
-                EquipmentId = plan.Equipments.FirstOrDefault()?.Oid,
+                PlanNumber = link.LinkPlan.M_Plan_Num,
+                OperationNumber = link.Operation != null ? link.Operation.M_Operation_Num : String.Empty ,
+                Equipment = link.LinkEquipment.EquipmentName,
+                DueDate = link.LinkPlan.NextDate,
+                PlanId = link.LinkPlan.Oid,
+                OperationId = link.Operation?.Oid ?? Guid.Empty,
+                EquipmentId = link.LinkEquipment.Oid,
                 UserId = Guid.Parse(currentUser.ToString()),
                 UserName = currentUserName,
-                SeparateWorkOrderPerEquipment = plan.SeparateWorkOrderPerEquipment
+                SeparateWorkOrderPerEquipment = link.LinkPlan.SeparateWorkOrderPerEquipment,
+                Sequential = link.LinkPlan != null && link.LinkPlan.FrequencyType == FrequencyType.Sequential
             };
             if (dueDate != null)
             {
