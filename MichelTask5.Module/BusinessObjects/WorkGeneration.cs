@@ -124,6 +124,7 @@ namespace MichelTask5.Module.BusinessObjects
         }
 
         public WorkLoadItem CreateWorkLoadItem(PlanEquipmentLink link, string currentUserName, object currentUser,
+            int? sequence,
             DateTime? dueDate)
         {
             if (link.LinkPlan == null)
@@ -134,7 +135,7 @@ namespace MichelTask5.Module.BusinessObjects
             var workLoadItem = new WorkLoadItem(Session)
             {
                 PlanNumber = link.LinkPlan.M_Plan_Num,
-                OperationNumber = link.Operation != null ? link.Operation.M_Operation_Num : String.Empty ,
+                OperationNumber = link.Operation != null ? link.Operation.M_Operation_Num : String.Empty,
                 Equipment = link.LinkEquipment.EquipmentName,
                 DueDate = link.LinkPlan.NextDate,
                 PlanId = link.LinkPlan.Oid,
@@ -148,6 +149,11 @@ namespace MichelTask5.Module.BusinessObjects
             if (dueDate != null)
             {
                 workLoadItem.DueDate = dueDate.Value;
+            }
+
+            if (sequence != null && workLoadItem.Sequential)
+            {
+                workLoadItem.Sequence = sequence.Value;
             }
 
             workLoadItem.Save();

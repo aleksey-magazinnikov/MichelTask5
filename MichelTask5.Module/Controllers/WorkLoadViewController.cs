@@ -51,19 +51,20 @@ namespace MichelTask5.Module.Controllers
                     if (link.LinkPlan.FrequencyType == FrequencyType.Rolling || link.LinkPlan.FrequencyType == FrequencyType.Sequential)
                     {
                         var linkPlanNextDate = link.LinkPlan.NextDate;
-
+                        var sequence = 1;
                         while (linkPlanNextDate <= toDate)
                         {
                             var days = workLoad.GetPeriodInDays(link);
-                            var workLoadItem = workLoad.CreateWorkLoadItem(link, SecuritySystem.CurrentUserName, SecuritySystem.CurrentUserId, linkPlanNextDate);
+                            var workLoadItem = workLoad.CreateWorkLoadItem(link, SecuritySystem.CurrentUserName, SecuritySystem.CurrentUserId, sequence, linkPlanNextDate);
                             workLoad.Items.Add(workLoadItem);
 
                             linkPlanNextDate = linkPlanNextDate.AddDays(days);
+                            sequence++;
                         }
                     }
                     else
                     {
-                        var workLoadItem = workLoad.CreateWorkLoadItem(link, SecuritySystem.CurrentUserName, SecuritySystem.CurrentUserId, null);
+                        var workLoadItem = workLoad.CreateWorkLoadItem(link, SecuritySystem.CurrentUserName, SecuritySystem.CurrentUserId, null, null);
                         workLoad.Items.Add(workLoadItem);
                     }
                 }

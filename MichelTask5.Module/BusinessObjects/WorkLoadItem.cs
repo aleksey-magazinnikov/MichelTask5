@@ -106,5 +106,13 @@ namespace MichelTask5.Module.BusinessObjects
             get { return sequential; }
             set { SetPropertyValue(nameof(Sequential), ref sequential, value); }
         }
+
+        private int sequence;
+        [Browsable(false)]
+        public int Sequence
+        {
+            get { return sequence; }
+            set { SetPropertyValue(nameof(Sequence), ref sequence, value); }
+        }
     }
 }

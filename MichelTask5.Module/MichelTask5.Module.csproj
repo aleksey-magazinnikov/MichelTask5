@@ -110,6 +110,7 @@
     <Compile Include="BusinessObjects\Location.cs" />
     <Compile Include="BusinessObjects\M_Operation.cs" />
     <Compile Include="BusinessObjects\M_Plan.cs" />
+    <Compile Include="BusinessObjects\OperationResult.cs" />
     <Compile Include="BusinessObjects\Ope_Equ.cs" />
     <Compile Include="BusinessObjects\PlanEquipmentLink.cs" />
     <Compile Include="BusinessObjects\PlanGroup.cs" />

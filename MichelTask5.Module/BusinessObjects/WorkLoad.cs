@@ -92,7 +92,7 @@ namespace MichelTask5.Module.BusinessObjects
             return days;
         }
 
-        public WorkLoadItem CreateWorkLoadItem(PlanEquipmentLink link, string currentUserName, object currentUser,
+        public WorkLoadItem CreateWorkLoadItem(PlanEquipmentLink link, string currentUserName, object currentUser, int? sequence,
             DateTime? dueDate)
         {
             var workLoadItem = new WorkLoadItem(Session)
@@ -109,10 +109,16 @@ namespace MichelTask5.Module.BusinessObjects
                 WorkLoad = this,
                 SeparateWorkOrderPerEquipment = link.LinkPlan?.SeparateWorkOrderPerEquipment ?? false,
                 Sequential = link.LinkPlan != null && link.LinkPlan.FrequencyType == FrequencyType.Sequential
+
             };
             if (dueDate != null)
             {
                 workLoadItem.DueDate = dueDate.Value;
+            }
+            
+            if (sequence != null && workLoadItem.Sequential)
+            {
+                workLoadItem.Sequence = sequence.Value;
             }
 
             workLoadItem.Save();
