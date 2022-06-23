@@ -108,7 +108,8 @@ namespace MichelTask5.Module.BusinessObjects
                 UserName = currentUserName,
                 WorkLoad = this,
                 SeparateWorkOrderPerEquipment = link.LinkPlan?.SeparateWorkOrderPerEquipment ?? false,
-                Sequential = link.LinkPlan != null && link.LinkPlan.FrequencyType == FrequencyType.Sequential
+                Sequential = link.LinkPlan != null && link.LinkPlan.FrequencyType == FrequencyType.Sequential,
+                Superposed = link.LinkPlan != null && link.LinkPlan.SuperposedPlanFlag
 
             };
             if (dueDate != null)

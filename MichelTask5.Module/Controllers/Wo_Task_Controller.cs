@@ -19,19 +19,24 @@ namespace MichelTask5.Module.Controllers
                 TargetObjectsCriteria =
                     (CriteriaOperator.Parse("Status != ?", WoTaskStatus.Completed)).ToString(),
                 ConfirmationMessage =
-                            "Are you sure you want to mark the selected task(s) as 'Completed'?",
+                    "Are you sure you want to mark the selected task(s) as 'Completed'?",
                 ImageName = "State_Task_Completed"
             };
-            markCompletedAction.Execute += (s, e) => {
-                foreach (WoTask task in e.SelectedObjects)
-                {
-                    task.EndDate = DateTime.Now;
-                    task.Status = WoTaskStatus.Completed;
-                    View.ObjectSpace.SetModified(task);
-                }
-                View.ObjectSpace.CommitChanges();
-                View.ObjectSpace.Refresh();
-            };
+            markCompletedAction.Execute += OnMarkCompletedActionOnExecute;
+        }
+
+        private void OnMarkCompletedActionOnExecute(object s, SimpleActionExecuteEventArgs e)
+        {
+            var objectSpace = Application.CreateObjectSpace(typeof(WoTask));
+            foreach (WoTask task in e.SelectedObjects)
+            {
+                var woTask = objectSpace.GetObject(task);
+                woTask.EndDate = DateTime.Now;
+                woTask.Status = WoTaskStatus.Completed;
+            }
+
+            objectSpace.CommitChanges();
+            View.Refresh(true);
         }
     }
 }

@@ -144,7 +144,8 @@ namespace MichelTask5.Module.BusinessObjects
                 UserId = Guid.Parse(currentUser.ToString()),
                 UserName = currentUserName,
                 SeparateWorkOrderPerEquipment = link.LinkPlan.SeparateWorkOrderPerEquipment,
-                Sequential = link.LinkPlan != null && link.LinkPlan.FrequencyType == FrequencyType.Sequential
+                Sequential = link.LinkPlan != null && link.LinkPlan.FrequencyType == FrequencyType.Sequential,
+                Superposed = link.LinkPlan != null && link.LinkPlan.SuperposedPlanFlag
             };
             if (dueDate != null)
             {

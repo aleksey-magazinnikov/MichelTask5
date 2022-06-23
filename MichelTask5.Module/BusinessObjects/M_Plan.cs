@@ -117,6 +117,15 @@ namespace MichelTask5.Module.BusinessObjects
                 }
             }
         }
+
+        private bool superposedPlanFlag;
+        
+        [Browsable(false)]
+        public bool SuperposedPlanFlag
+        {
+            get { return superposedPlanFlag; }
+            set { SetPropertyValue(nameof(SuperposedPlanFlag), ref superposedPlanFlag, value); }
+        }
         
         private M_Plan superposedPlan;
         [Appearance("SuperposedPlanHiden", Visibility = ViewItemVisibility.ShowEmptySpace, Criteria = "Superpose_Plan == false", Context = "DetailView")]
@@ -124,7 +133,15 @@ namespace MichelTask5.Module.BusinessObjects
         public M_Plan SuperposedPlan
         {
             get { return superposedPlan; }
-            set { SetPropertyValue(nameof(SuperposedPlan), ref superposedPlan, value); }
+            set
+            {
+                bool modified = SetPropertyValue(nameof(SuperposedPlan), ref superposedPlan, value);
+                if (!IsLoading && !IsSaving && modified && value!= null)
+                {
+                    value.superposedPlanFlag = true;
+                    value.Save();
+                }
+            }
         }
 
         private XPCollection<M_Plan> fAvailablePlans;

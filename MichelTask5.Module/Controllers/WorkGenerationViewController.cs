@@ -146,6 +146,7 @@ namespace MichelTask5.Module.Controllers
                                 SecuritySystem.CurrentUserName,
                                 SecuritySystem.CurrentUserId, workOrder);
                             workGeneration.ListOfGeneratedWorkOrders.Add(workGenerationItem);
+                            objectSpace.CommitChanges();
                         }
                     }
                     else
@@ -166,6 +167,7 @@ namespace MichelTask5.Module.Controllers
                             SecuritySystem.CurrentUserName,
                             SecuritySystem.CurrentUserId, workOrder);
                         workGeneration.ListOfGeneratedWorkOrders.Add(workGenerationItem);
+                        objectSpace.CommitChanges();
                     }
                 }
 
