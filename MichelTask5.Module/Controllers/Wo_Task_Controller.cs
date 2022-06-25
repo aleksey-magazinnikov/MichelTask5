@@ -31,8 +31,16 @@ namespace MichelTask5.Module.Controllers
             foreach (WoTask task in e.SelectedObjects)
             {
                 var woTask = objectSpace.GetObject(task);
-                woTask.EndDate = DateTime.Now;
-                woTask.Status = WoTaskStatus.Completed;
+                if (woTask != null)
+                {
+                    woTask.EndDate = DateTime.Now;
+                    woTask.Status = WoTaskStatus.Completed;
+                }
+                else
+                {
+                    task.EndDate = DateTime.Now;
+                    task.Status = WoTaskStatus.Completed;
+                }
             }
 
             objectSpace.CommitChanges();
