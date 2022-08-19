@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Linq;
 using DevExpress.Data.Filtering;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
@@ -13,27 +14,58 @@ namespace MichelTask5.Module.BusinessObjects
     public class Counter_Values : BaseObject
     {
         public Counter_Values(Session session) : base(session)
-        { }
-        DateTime date;
+        {
+        }
+
+        DateTime _date;
+
         [RuleRequiredField(DefaultContexts.Save)]
 
         public DateTime Date
         {
-            get { return date; }
-            set { SetPropertyValue(nameof(date), ref date, value); }
+            get { return _date; }
+            set { SetPropertyValue(nameof(_date), ref _date, value); }
         }
-        float counter_Value;
+
+        float _counter_Value;
+
         public float Counter_Value
         {
-            get { return counter_Value; }
-            set { SetPropertyValue(nameof(Counter_Value), ref counter_Value, value); }
+            get { return _counter_Value; }
+            set { SetPropertyValue(nameof(Counter_Value), ref _counter_Value, value); }
         }
-        private Counter counter;
+
+        private Counter _counter;
+
         [Association("Values_Of_Counter")]
+        [RuleRequiredField(DefaultContexts.Save)]
         public Counter Counter
         {
-            get { return counter; }
-            set { SetPropertyValue(nameof(Counter), ref counter, value); }
+            get { return _counter; }
+            set { SetPropertyValue(nameof(Counter), ref _counter, value); }
+        }
+
+        [Browsable(false)]
+        [RuleFromBoolProperty("CounterValuesRule", DefaultContexts.Save,
+            "Check Counter values", UsedProperties = "Counter_Value, Date")]
+        public bool CounterRule
+        {
+            get
+            {
+                using (var counterValues = new XPCollection<Counter_Values>(
+                    PersistentCriteriaEvaluationBehavior.InTransaction, Session,
+                    new BinaryOperator("Counter", this.Counter, BinaryOperatorType.Equal)))
+                {
+                    if (counterValues.Any(counterValue =>
+                        counterValue.Date > this.Date && counterValue.Counter_Value < this.Counter_Value ||
+                        counterValue.Date < this.Date && counterValue.Counter_Value > this.Counter_Value))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
         }
     }
 }

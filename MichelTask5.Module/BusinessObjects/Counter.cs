@@ -14,37 +14,46 @@ namespace MichelTask5.Module.BusinessObjects
     public class Counter : BaseObject
     {
         public Counter(Session session) : base(session)
-        { }
-        int counter_ID;
-        [RuleUniqueValue("", DefaultContexts.Save, CriteriaEvaluationBehavior = CriteriaEvaluationBehavior.BeforeTransaction), NonCloneable, ModelDefault("AllowEdit", "False")]
+        {
+        }
+
+        int _counter_ID;
+
+        [RuleUniqueValue("", DefaultContexts.Save,
+             CriteriaEvaluationBehavior = CriteriaEvaluationBehavior.BeforeTransaction), NonCloneable,
+         ModelDefault("AllowEdit", "False")]
         [Size(3)]
         public int Counter_ID
         {
-            get { return counter_ID; }
-            set { SetPropertyValue(nameof(Counter_ID), ref counter_ID, value); }
+            get { return _counter_ID; }
+            set { SetPropertyValue(nameof(Counter_ID), ref _counter_ID, value); }
         }
-        string counter_Code;
+
+        string _counter_Code;
+
         [Size(3)]
         public string Counter_Code
         {
-            get { return counter_Code; }
-            set { SetPropertyValue(nameof(Counter_Code), ref counter_Code, value); }
+            get { return _counter_Code; }
+            set { SetPropertyValue(nameof(Counter_Code), ref _counter_Code, value); }
         }
-        string counter_Name;
+
+        string _counter_Name;
+
         [Size(100)]
         public string Counter_Name
         {
-            get { return counter_Name; }
-            set { SetPropertyValue(nameof(Counter_Name), ref counter_Name, value); }
+            get { return _counter_Name; }
+            set { SetPropertyValue(nameof(Counter_Name), ref _counter_Name, value); }
         }
 
-        private int _Sequence;
+        private int _sequence;
 
         [Browsable(false)]
         public int Sequence
         {
-            get { return _Sequence; }
-            set { SetPropertyValue("Sequence", ref _Sequence, value); }
+            get { return _sequence; }
+            set { SetPropertyValue(nameof(Sequence), ref _sequence, value); }
         }
 
         public override void AfterConstruction()
@@ -55,6 +64,7 @@ namespace MichelTask5.Module.BusinessObjects
                 UpdateSequence();
             }
         }
+
         protected override void OnSaving()
         {
             base.OnSaving();
@@ -74,9 +84,11 @@ namespace MichelTask5.Module.BusinessObjects
                 {
                     Sequence = Convert.ToInt32(max) + 1;
                 }
+
                 Counter_ID = Sequence;
             }
         }
+
         private bool active_Counter;
 
         [ImagesForBoolValues("Check", "del")]
@@ -92,6 +104,7 @@ namespace MichelTask5.Module.BusinessObjects
         {
             get { return GetCollection<Counter_Values>(nameof(CounterValues)); }
         }
+
         [Association("Equip_Counter")]
         public XPCollection<Equipment> EquipCounters
         {

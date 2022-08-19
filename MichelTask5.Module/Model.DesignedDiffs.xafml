@@ -88,5 +88,11 @@
         </LayoutGroup>
       </Layout>
     </DetailView>
+    <ListView Id="Counter_Values_ListView" MasterDetailMode="ListViewOnly" AllowEdit="True" NewItemRowPosition="Top">
+      <Columns>
+        <ColumnInfo Id="Counter" SortIndex="0" SortOrder="Ascending" />
+      </Columns>
+      <SplitLayout SplitterPosition="388" />
+    </ListView>
   </Views>
 </Application>

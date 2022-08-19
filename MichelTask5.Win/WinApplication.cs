@@ -14,6 +14,7 @@ namespace MichelTask5.Win {
         public MichelTask5WindowsFormsApplication() {
 			InitializeComponent();
 			SplashScreen = new DXSplashScreen(typeof(XafSplashScreen), new DefaultOverlayFormOptions());
+            LinkNewObjectToParentImmediately = true;
         }
         protected override void CreateDefaultObjectSpaceProvider(CreateCustomObjectSpaceProviderEventArgs args) {
             args.ObjectSpaceProviders.Add(new XPObjectSpaceProvider(XPObjectSpaceProvider.GetDataStoreProvider(args.ConnectionString, args.Connection, true), false));
