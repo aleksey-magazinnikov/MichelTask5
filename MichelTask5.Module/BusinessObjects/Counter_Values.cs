@@ -24,7 +24,7 @@ namespace MichelTask5.Module.BusinessObjects
         public DateTime Date
         {
             get { return _date; }
-            set { SetPropertyValue(nameof(_date), ref _date, value); }
+            set { SetPropertyValue(nameof(Date), ref _date, value); }
         }
 
         float _counter_Value;
@@ -46,8 +46,7 @@ namespace MichelTask5.Module.BusinessObjects
         }
 
         [Browsable(false)]
-        [RuleFromBoolProperty("CounterValuesRule", DefaultContexts.Save,
-            "Check Counter values", UsedProperties = "Counter_Value, Date")]
+        [RuleFromBoolProperty("CounterValuesRule", DefaultContexts.Save, "Check Counter ({Counter}): values Date: {Date} or Value: {Counter_Value} are not correct.", UsedProperties = "Counter_Value, Date")]
         public bool CounterRule
         {
             get
@@ -57,8 +56,10 @@ namespace MichelTask5.Module.BusinessObjects
                     new BinaryOperator("Counter", this.Counter, BinaryOperatorType.Equal)))
                 {
                     if (counterValues.Any(counterValue =>
-                        counterValue.Date > this.Date && counterValue.Counter_Value < this.Counter_Value ||
-                        counterValue.Date < this.Date && counterValue.Counter_Value > this.Counter_Value))
+                        counterValue.Date >= this.Date && counterValue.Counter_Value <= this.Counter_Value &&
+                        counterValue.Oid != this.Oid ||
+                        counterValue.Date <= this.Date && counterValue.Counter_Value >= this.Counter_Value &&
+                        counterValue.Oid != this.Oid))
                     {
                         return false;
                     }

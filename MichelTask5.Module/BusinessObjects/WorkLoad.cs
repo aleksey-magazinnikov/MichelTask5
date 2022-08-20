@@ -43,7 +43,7 @@ namespace MichelTask5.Module.BusinessObjects
         public DateTime FromDate
         {
             get { return fromDate; }
-            set { SetPropertyValue(nameof(fromDate), ref fromDate, value); }
+            set { SetPropertyValue(nameof(FromDate), ref fromDate, value); }
         }
 
         DateTime toDate;

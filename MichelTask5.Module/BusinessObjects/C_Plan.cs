@@ -141,7 +141,7 @@ namespace MichelTask5.Module.BusinessObjects
         public DateTime LastDate
         {
             get { return lastDate; }
-            set { SetPropertyValue(nameof(lastDate), ref lastDate, value); }
+            set { SetPropertyValue(nameof(LastDate), ref lastDate, value); }
         }
 
         float periodValue;
