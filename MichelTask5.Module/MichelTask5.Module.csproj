@@ -103,8 +103,10 @@
     <Compile Include="BusinessObjects\ApplicationUserLoginInfo.cs" />
     <Compile Include="BusinessObjects\Counter.cs" />
     <Compile Include="BusinessObjects\Counter_Values.cs" />
+    <Compile Include="BusinessObjects\CPlanEquipmentLink.cs" />
     <Compile Include="BusinessObjects\CreateWoParameters.cs" />
     <Compile Include="BusinessObjects\C_Plan.cs" />
+    <Compile Include="BusinessObjects\Enums.cs" />
     <Compile Include="BusinessObjects\Equipment.cs" />
     <Compile Include="BusinessObjects\EquipmentType.cs" />
     <Compile Include="BusinessObjects\Location.cs" />
@@ -174,6 +176,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Welcome.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="UnusableNodes.xml">
+      <DependentUpon>Model.DesignedDiffs.xafml</DependentUpon>
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

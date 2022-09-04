@@ -10,7 +10,7 @@ using DevExpress.Xpo;
 
 namespace MichelTask5.Module.BusinessObjects
 {
-    [NavigationItem("Maintenance")]
+    [NavigationItem("Default")]
     public class Counter_Values : BaseObject
     {
         public Counter_Values(Session session) : base(session)

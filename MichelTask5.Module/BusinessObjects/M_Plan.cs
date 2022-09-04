@@ -183,7 +183,7 @@ namespace MichelTask5.Module.BusinessObjects
             set
             {
                 bool modified = SetPropertyValue(nameof(BaseDate), ref baseDate, value);
-                if (!IsLoading && !IsSaving && modified && period != PeriodType.NotSelected)
+                if (!IsLoading && !IsSaving && modified && period != Enums.PeriodType.NotSelected)
                 {
                     RecalculateDatesForPeriod(period);
                     OnChanged(nameof(NextDate));
@@ -213,8 +213,8 @@ namespace MichelTask5.Module.BusinessObjects
             set { SetPropertyValue(nameof(Plan_Status), ref plan_Status, value); }
         }
 
-        private FrequencyType frequencyType;
-        public FrequencyType FrequencyType
+        private Enums.FrequencyType frequencyType;
+        public Enums.FrequencyType FrequencyType
         {
             get { return frequencyType; }
             set { SetPropertyValue(nameof(FrequencyType), ref frequencyType, value); }
@@ -253,17 +253,17 @@ namespace MichelTask5.Module.BusinessObjects
             set { SetPropertyValue(nameof(Site), ref site, value); }
         }
 
-        private PeriodType period;
+        private Enums.PeriodType period;
         [ImmediatePostData]
-        public PeriodType Period
+        public Enums.PeriodType Period
         {
             get { return period; }
             set
             {
-                bool modified = SetPropertyValue(nameof(PeriodType), ref period, value);
+                bool modified = SetPropertyValue(nameof(Enums.PeriodType), ref period, value);
                 if (!IsLoading && !IsSaving && modified)
                 {
-                    if (value == PeriodType.NotSelected)
+                    if (value == Enums.PeriodType.NotSelected)
                     {
                         Number = 0;
                         BaseDate = DateTime.Today;
@@ -309,35 +309,22 @@ namespace MichelTask5.Module.BusinessObjects
         [ManyToManyAlias(nameof(PlanEquipmentsLinks), nameof(PlanEquipmentLink.LinkEquipment))]
         public IList<Equipment> Equipments => GetList<Equipment>(nameof(Equipments));
 
-        private void RecalculateDatesForPeriod(PeriodType value)
+        private void RecalculateDatesForPeriod(Enums.PeriodType value)
         {
             switch (value)
             {
-                case PeriodType.Days:
+                case Enums.PeriodType.Days:
                     NextDate = BaseDate.AddDays(number);
                     break;
-                case PeriodType.Weeks:
+                case Enums.PeriodType.Weeks:
                     NextDate = BaseDate.AddDays(number * 7);
                     break;
-                case PeriodType.Months:
+                case Enums.PeriodType.Months:
                     NextDate = BaseDate.AddMonths(number);
                     break;
             }
         }
     }
 
-    public enum PeriodType
-    {
-        NotSelected = 0,
-        Days = 1,
-        Weeks = 2,
-        Months = 3
-    }
 
-    public enum FrequencyType
-    {
-        Regular = 0,
-        Rolling = 1,
-        Sequential = 2
-    }
 }

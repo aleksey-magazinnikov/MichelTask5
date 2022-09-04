@@ -115,31 +115,143 @@ namespace MichelTask5.Module.Controllers
 
             foreach (var obj in groupedList)
             {
-                var plan = objectSpace.GetObjectByKey<M_Plan>(obj.PlanId);
-                if (plan.Superpose_Plan && plan.SuperposedPlan != null)
+                switch (workGeneration.Plan)
                 {
-                    superposedPlans.Add(plan.SuperposedPlan.Oid);
-                }
-
-                //if (plan.FrequencyType == FrequencyType.Regular && generatedPlans.Contains(plan.Oid))
-                //{
-                //    continue;
-                //}
-
-                if (!superposedPlans.Contains(plan.Oid))
-                {
-                    if (plan.SeparateWorkOrderPerEquipment && plan.Equipments.Any())
+                    case Enums.PlanType.M:
                     {
-                        var taskNumber = 1;
+                        var plan = objectSpace.GetObjectByKey<M_Plan>(obj.PlanId);
+                        if (plan.Superpose_Plan && plan.SuperposedPlan != null)
+                        {
+                            superposedPlans.Add(plan.SuperposedPlan.Oid);
+                        }
 
-                        foreach (var equipment in plan.Equipments)
+                        //if (plan.FrequencyType == FrequencyType.Regular && generatedPlans.Contains(plan.Oid))
+                        //{
+                        //    continue;
+                        //}
+
+                        if (!superposedPlans.Contains(plan.Oid))
+                        {
+                            if (plan.SeparateWorkOrderPerEquipment && plan.Equipments.Any())
+                            {
+                                var taskNumber = 1;
+
+                                foreach (var equipment in plan.Equipments)
+                                {
+                                    var workOrder = CreateWorkOrder(objectSpace, plan, obj.DueDate, out var operation);
+                                    var woTask = CreateWoTask(objectSpace, operation, equipment, obj.DueDate, taskNumber);
+
+                                    workOrder.Tasks.Add(woTask);
+
+                                    taskNumber++;
+
+                                    workOrder.Save();
+                                    var workGenerationItem = workGeneration.CreateWorkGenerationItem(plan,
+                                        SecuritySystem.CurrentUserName,
+                                        SecuritySystem.CurrentUserId, workOrder);
+                                    workGeneration.ListOfGeneratedWorkOrders.Add(workGenerationItem);
+                                    objectSpace.CommitChanges();
+                                }
+                            }
+                            else
+                            {
+                                var workOrder = CreateWorkOrder(objectSpace, plan, obj.DueDate, out var operation);
+
+                                var taskNumber = 1;
+                                foreach (var equipment in plan.Equipments)
+                                {
+                                    var woTask = CreateWoTask(objectSpace, operation, equipment, obj.DueDate, taskNumber);
+
+                                    workOrder.Tasks.Add(woTask);
+                                    taskNumber++;
+                                }
+
+                                workOrder.Save();
+                                var workGenerationItem = workGeneration.CreateWorkGenerationItem(plan,
+                                    SecuritySystem.CurrentUserName,
+                                    SecuritySystem.CurrentUserId, workOrder);
+                                workGeneration.ListOfGeneratedWorkOrders.Add(workGenerationItem);
+                                objectSpace.CommitChanges();
+                            }
+                        }
+
+                        //generatedPlans.Add(obj.PlanId);
+
+                        plan.Plan_Status = 2;
+                        if (plan.FrequencyType == Enums.FrequencyType.Regular)
+                        {
+                            plan.BaseDate = DateTime.Today;
+                        }
+                        else
+                        {
+                            if (plan.BaseDate < obj.DueDate)
+                            {
+                                plan.BaseDate = obj.DueDate;
+                            }
+                        }
+
+                        plan.LastDate = DateTime.Today;
+                        plan.NextDate = GetNextDate(plan);
+                        break;
+                    }
+                    case Enums.PlanType.C:
+                    {
+                        var plan = objectSpace.GetObjectByKey<C_Plan>(obj.PlanId);
+                        if (plan.SeparateWorkOrderPerEquipment && plan.Equipments.Any())
+                        {
+                            var taskNumber = 1;
+
+                            foreach (var equipment in plan.Equipments)
+                            {
+                                var workOrder = CreateWorkOrder(objectSpace, plan, obj.DueDate, out var operation);
+                                var woTask = CreateWoTask(objectSpace, operation, equipment, obj.DueDate,
+                                    taskNumber);
+
+                                workOrder.Tasks.Add(woTask);
+
+                                taskNumber++;
+
+                                workOrder.Save();
+                                var workGenerationItem = workGeneration.CreateWorkGenerationItem(plan,
+                                    SecuritySystem.CurrentUserName,
+                                    SecuritySystem.CurrentUserId, workOrder);
+                                workGeneration.ListOfGeneratedWorkOrders.Add(workGenerationItem);
+                                if (plan.Usage == UsageType.Periodic)
+                                {
+                                    var nextValue = plan.NextValue;
+                                    var counterValue = equipment.Counter.CounterValues
+                                        .FirstOrDefault(v => v.Counter_Value >= nextValue)?.Counter_Value;
+
+                                    plan.BaseValue = counterValue.Value;
+                                    plan.NextValue = plan.BaseValue + plan.PeriodValue;
+                                }
+
+                                objectSpace.CommitChanges();
+                            }
+                        }
+                        else
                         {
                             var workOrder = CreateWorkOrder(objectSpace, plan, obj.DueDate, out var operation);
-                            var woTask = CreateWoTask(objectSpace, operation, equipment, obj.DueDate, taskNumber);
 
-                            workOrder.Tasks.Add(woTask);
+                            var taskNumber = 1;
+                            foreach (var equipment in plan.Equipments)
+                            {
+                                var woTask = CreateWoTask(objectSpace, operation, equipment, obj.DueDate,
+                                    taskNumber);
 
-                            taskNumber++;
+                                workOrder.Tasks.Add(woTask);
+                                taskNumber++;
+
+                                if (plan.Usage == UsageType.Periodic)
+                                {
+                                    var nextValue = plan.NextValue;
+                                    var counterValue = equipment.Counter.CounterValues
+                                        .FirstOrDefault(v => v.Counter_Value >= nextValue)?.Counter_Value;
+
+                                    plan.BaseValue = counterValue.Value;
+                                    plan.NextValue = plan.BaseValue + plan.PeriodValue;
+                                }
+                            }
 
                             workOrder.Save();
                             var workGenerationItem = workGeneration.CreateWorkGenerationItem(plan,
@@ -148,46 +260,21 @@ namespace MichelTask5.Module.Controllers
                             workGeneration.ListOfGeneratedWorkOrders.Add(workGenerationItem);
                             objectSpace.CommitChanges();
                         }
-                    }
-                    else
-                    {
-                        var workOrder = CreateWorkOrder(objectSpace, plan, obj.DueDate, out var operation);
 
-                        var taskNumber = 1;
-                        foreach (var equipment in plan.Equipments)
+                        if (plan.Usage == UsageType.Periodic)
                         {
-                            var woTask = CreateWoTask(objectSpace, operation, equipment, obj.DueDate, taskNumber);
-
-                            workOrder.Tasks.Add(woTask);
-                            taskNumber++;
+                            plan.Plan_Status = 2;
+                        }
+                        else if (plan.Usage == UsageType.Threshold)
+                        {
+                            plan.Plan_Status = 3;
                         }
 
-                        workOrder.Save();
-                        var workGenerationItem = workGeneration.CreateWorkGenerationItem(plan,
-                            SecuritySystem.CurrentUserName,
-                            SecuritySystem.CurrentUserId, workOrder);
-                        workGeneration.ListOfGeneratedWorkOrders.Add(workGenerationItem);
-                        objectSpace.CommitChanges();
+                        plan.LastDate = DateTime.Today;
+                        
+                        break;
                     }
                 }
-
-                //generatedPlans.Add(obj.PlanId);
-
-                plan.Plan_Status = 2;
-                if (plan.FrequencyType == FrequencyType.Regular)
-                {
-                    plan.BaseDate = DateTime.Today;
-                }
-                else
-                {
-                    if (plan.BaseDate < obj.DueDate)
-                    {
-                        plan.BaseDate = obj.DueDate;
-                    }
-                }
-
-                plan.LastDate = DateTime.Today;
-                plan.NextDate = GetNextDate(plan);
 
                 objectSpace.CommitChanges();
             }
@@ -247,41 +334,99 @@ namespace MichelTask5.Module.Controllers
         {
             if (View.CurrentObject is WorkGeneration workGeneration)
             {
-                var fromDate = workGeneration.FromDate;
-                var toDate = workGeneration.ToDate;
-                if (fromDate <= DateTime.MinValue || toDate <= DateTime.MinValue)
-                {
-                    return;
-                }
-
                 var objectSpace = View.ObjectSpace;
-                workGeneration.Items.Clear();
-                DeleteAllWorkLoadItems(objectSpace);
-
-                var collection = objectSpace.GetObjects<PlanEquipmentLink>(CriteriaOperator.Parse(
-                    "LinkPlan.Active_Plan == 'true' and LinkPlan.Freez_Plan == 'false' and LinkPlan.Plan_Status == 1 and LinkPlan.NextDate >= ? and LinkPlan.NextDate <= ?",
-                    fromDate, toDate));
-                foreach (PlanEquipmentLink link in collection)
+                switch (workGeneration.Plan)
                 {
-                    if (link.LinkPlan.FrequencyType == FrequencyType.Rolling || link.LinkPlan.FrequencyType == FrequencyType.Sequential)
+                    case Enums.PlanType.M:
                     {
-                        var linkPlanNextDate = link.LinkPlan.NextDate;
-                        var sequence = 1;
-
-                        while (linkPlanNextDate <= toDate)
+                        var fromDate = workGeneration.FromDate;
+                        var toDate = workGeneration.ToDate;
+                        if (fromDate <= DateTime.MinValue || toDate <= DateTime.MinValue)
                         {
-                            var days = workGeneration.GetPeriodInDays(link.LinkPlan);
-                            var workLoadItem = workGeneration.CreateWorkLoadItem(link, SecuritySystem.CurrentUserName, SecuritySystem.CurrentUserId, sequence, linkPlanNextDate);
-                            workGeneration.Items.Add(workLoadItem);
-
-                            linkPlanNextDate = linkPlanNextDate.AddDays(days);
-                            sequence++;
+                            return;
                         }
+
+                        workGeneration.Items.Clear();
+                        DeleteAllWorkLoadItems(objectSpace);
+
+                        var collection = objectSpace.GetObjects<PlanEquipmentLink>(CriteriaOperator.Parse(
+                            "LinkPlan.Active_Plan == 'true' and LinkPlan.Freez_Plan == 'false' and LinkPlan.Plan_Status == 1 and LinkPlan.NextDate >= ? and LinkPlan.NextDate <= ?",
+                            fromDate, toDate));
+                        foreach (PlanEquipmentLink link in collection)
+                        {
+                            if (link.LinkPlan.FrequencyType == Enums.FrequencyType.Rolling ||
+                                link.LinkPlan.FrequencyType == Enums.FrequencyType.Sequential)
+                            {
+                                var linkPlanNextDate = link.LinkPlan.NextDate;
+                                var sequence = 1;
+                                while (linkPlanNextDate <= toDate)
+                                {
+                                    var days = workGeneration.GetPeriodInDays(link.LinkPlan);
+                                    var workLoadItem = workGeneration.CreateWorkLoadItem(link,
+                                        SecuritySystem.CurrentUserName,
+                                        SecuritySystem.CurrentUserId, sequence, linkPlanNextDate);
+                                    workGeneration.Items.Add(workLoadItem);
+
+                                    linkPlanNextDate = linkPlanNextDate.AddDays(days);
+                                    sequence++;
+                                }
+                            }
+                            else
+                            {
+                                var workLoadItem = workGeneration.CreateWorkLoadItem(link,
+                                    SecuritySystem.CurrentUserName,
+                                    SecuritySystem.CurrentUserId, null, null);
+                                workGeneration.Items.Add(workLoadItem);
+                            }
+                        }
+
+                        break;
                     }
-                    else
+                    case Enums.PlanType.C:
                     {
-                        var workLoadItem = workGeneration.CreateWorkLoadItem(link, SecuritySystem.CurrentUserName, SecuritySystem.CurrentUserId, null, null);
-                        workGeneration.Items.Add(workLoadItem);
+                        workGeneration.Items.Clear();
+                        DeleteAllWorkLoadItems(objectSpace);
+
+                        var collection = objectSpace.GetObjects<CPlanEquipmentLink>(CriteriaOperator.Parse(
+                            "LinkPlan.Active_Plan == 'true' and LinkPlan.Freez_Plan == 'false' and LinkPlan.Plan_Status == 1"));
+                        foreach (CPlanEquipmentLink link in collection)
+                        {
+                            if (link.LinkPlan.Usage == UsageType.Periodic)
+                            {
+                                var linkPlanNextValue = link.LinkPlan.NextValue;
+                                var equipment = link.LinkEquipment;
+                                if (equipment.Counter.CounterValues.Any(v => v.Counter_Value >= linkPlanNextValue))
+                                {
+                                    var counterValue = equipment.Counter.CounterValues
+                                        .FirstOrDefault(v => v.Counter_Value >= linkPlanNextValue)?.Counter_Value;
+                                        var workLoadItem = workGeneration.CreateWorkLoadItemFromCPlan(link,
+                                        SecuritySystem.CurrentUserName,
+                                        SecuritySystem.CurrentUserId, counterValue);
+                                    workGeneration.Items.Add(workLoadItem);
+                                }
+
+                            }
+                            else if (link.LinkPlan.Usage == UsageType.Threshold)
+                            {
+                                var linkPlanNextValue = link.LinkPlan.NextValue;
+                                var linkPlanBaseValue = link.LinkPlan.BaseValue;
+                                var equipment = link.LinkEquipment;
+                                if (equipment.Counter.CounterValues.Any(v =>
+                                        v.Counter_Value <= linkPlanNextValue && v.Counter_Value >= linkPlanBaseValue))
+                                {
+                                    var counterValue = equipment.Counter.CounterValues
+                                        .FirstOrDefault((v =>
+                                            v.Counter_Value <= linkPlanNextValue &&
+                                            v.Counter_Value >= linkPlanBaseValue))?.Counter_Value;
+                                        var workLoadItem = workGeneration.CreateWorkLoadItemFromCPlan(link,
+                                        SecuritySystem.CurrentUserName,
+                                        SecuritySystem.CurrentUserId, counterValue);
+                                    workGeneration.Items.Add(workLoadItem);
+                                }
+                            }
+                        }
+
+                        break;
                     }
                 }
 
@@ -344,19 +489,38 @@ namespace MichelTask5.Module.Controllers
             
             return workOrder;
         }
+        
+        private static Work_Order CreateWorkOrder(IObjectSpace os, C_Plan plan, DateTime date, out M_Operation operation)
+        {
+            var workOrder = os.CreateObject<Work_Order>();
+            operation = plan.Plan_Operation;
+
+            workOrder.Operation = operation;
+            workOrder.Work_Request = operation != null ? operation.Operation_Name : String.Empty;
+            workOrder.Prefix = operation?.Prefix;
+            workOrder.Site = plan.Site;
+            workOrder.CPlan = plan;
+            workOrder.PlannedEndDate = date;
+            workOrder.PlannedStartDate = date;
+            workOrder.DueDate = date;
+            workOrder.Request_Description = operation?.Operation_Description;
+            workOrder.Work_orderDate = DateTime.Today;
+            
+            return workOrder;
+        }
 
         private DateTime GetNextDate(M_Plan plan)
         {
             var nextDate = DateTime.Today;
             switch (plan.Period)
             {
-                case PeriodType.Days:
+                case Enums.PeriodType.Days:
                     nextDate = plan.BaseDate.AddDays(plan.Number);
                     break;
-                case PeriodType.Weeks:
+                case Enums.PeriodType.Weeks:
                     nextDate = plan.BaseDate.AddDays(plan.Number * 7);
                     break;
-                case PeriodType.Months:
+                case Enums.PeriodType.Months:
                     nextDate = plan.BaseDate.AddMonths(plan.Number);
                     break;
             }

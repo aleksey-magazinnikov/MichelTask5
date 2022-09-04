@@ -179,5 +179,11 @@ namespace MichelTask5.Module.BusinessObjects
 
         [ManyToManyAlias(nameof(PlanEquipmentLinks), nameof(PlanEquipmentLink.LinkPlan))]
         public IList<M_Plan> Plans => GetList<M_Plan>(nameof(Plans));
+
+        [Association, Browsable(false)]
+        public IList<CPlanEquipmentLink> СPlanEquipmentLinks => GetList<CPlanEquipmentLink>(nameof(СPlanEquipmentLinks));
+
+        [ManyToManyAlias(nameof(СPlanEquipmentLinks), nameof(CPlanEquipmentLink.LinkPlan))]
+        public IList<C_Plan> СPlans => GetList<C_Plan>(nameof(СPlans));
     }
 }

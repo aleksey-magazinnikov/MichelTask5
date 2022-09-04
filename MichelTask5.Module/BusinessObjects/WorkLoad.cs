@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using DevExpress.Data.Filtering;
 using DevExpress.ExpressApp;
+using DevExpress.ExpressApp.ConditionalAppearance;
+using DevExpress.ExpressApp.Editors;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl;
@@ -20,6 +22,7 @@ namespace MichelTask5.Module.BusinessObjects
         CustomMessageTemplate = "Another WorkLoad already exists.")]
     [RuleCriteria("CannotDeleteWorkLoad", DefaultContexts.Delete, "False",
         CustomMessageTemplate = "Cannot delete WorkLoad.")]
+    [Appearance("DatesVisible", Visibility = ViewItemVisibility.Hide, Criteria = "Plan = 1", Context = "DetailView", TargetItems = "FromDate,ToDate")]
     public class WorkLoad : BaseObject
     {
         public WorkLoad(Session session) : base(session)
@@ -53,13 +56,21 @@ namespace MichelTask5.Module.BusinessObjects
             get { return toDate; }
             set { SetPropertyValue(nameof(ToDate), ref toDate, value); }
         }
-
+        
         PermissionPolicyUser user;
         [ModelDefault("AllowEdit", "False")]
         public PermissionPolicyUser User
         {
             get => user;
             set => SetPropertyValue("User", ref user, value);
+        }
+
+        private Enums.PlanType plan;
+        [ImmediatePostData]
+        public Enums.PlanType Plan
+        {
+            get => plan;
+            set => SetPropertyValue("Plan", ref plan, value);
         }
 
         PermissionPolicyUser GetCurrentUser() => Session.GetObjectByKey<PermissionPolicyUser>(SecuritySystem.CurrentUserId);
@@ -76,14 +87,14 @@ namespace MichelTask5.Module.BusinessObjects
             {
                 switch (link.LinkPlan.Period)
                 {
-                    case PeriodType.Days:
+                    case Enums.PeriodType.Days:
                         days = link.LinkPlan.Number;
                         break;
 
-                    case PeriodType.Weeks:
+                    case Enums.PeriodType.Weeks:
                         days = link.LinkPlan.Number * 7;
                         break;
-                    case PeriodType.Months:
+                    case Enums.PeriodType.Months:
                         days = (link.LinkPlan.NextDate - link.LinkPlan.BaseDate).Days;
                         break;
                 }
@@ -108,7 +119,7 @@ namespace MichelTask5.Module.BusinessObjects
                 UserName = currentUserName,
                 WorkLoad = this,
                 SeparateWorkOrderPerEquipment = link.LinkPlan?.SeparateWorkOrderPerEquipment ?? false,
-                Sequential = link.LinkPlan != null && link.LinkPlan.FrequencyType == FrequencyType.Sequential,
+                Sequential = link.LinkPlan != null && link.LinkPlan.FrequencyType == Enums.FrequencyType.Sequential,
                 Superposed = link.LinkPlan != null && link.LinkPlan.SuperposedPlanFlag
 
             };
@@ -121,6 +132,32 @@ namespace MichelTask5.Module.BusinessObjects
             {
                 workLoadItem.Sequence = sequence.Value;
             }
+
+            workLoadItem.Save();
+
+            return workLoadItem;
+        }
+
+        public WorkLoadItem CreateWorkLoadItemFromCPlan(CPlanEquipmentLink link, string currentUserName,
+            object currentUser, float? counterValue)
+        {
+            var workLoadItem = new WorkLoadItem(Session)
+            {
+                PlanNumber = link.LinkPlan != null ? link.LinkPlan.C_Plan_Num : String.Empty,
+                OperationNumber = link.Operation != null ? link.Operation.M_Operation_Num : String.Empty,
+                Equipment = link.LinkEquipment.EquipmentName,
+                DueDate = DateTime.Today,
+                PlanId = link.LinkPlan?.Oid ?? Guid.Empty,
+                OperationId = link.Operation?.Oid ?? Guid.Empty,
+                EquipmentId = link.LinkEquipment?.Oid ?? Guid.Empty,
+                UserId = Guid.Parse(currentUser.ToString()),
+                UserName = currentUserName,
+                WorkLoad = this,
+                SeparateWorkOrderPerEquipment = link.LinkPlan?.SeparateWorkOrderPerEquipment ?? false,
+                Periodic = link.LinkPlan?.Usage == UsageType.Periodic,
+                Threshold = link.LinkPlan?.Usage == UsageType.Threshold,
+                BaseValue = counterValue ?? default
+            };
 
             workLoadItem.Save();
 

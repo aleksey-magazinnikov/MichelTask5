@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using DevExpress.Data.Filtering;
 using DevExpress.ExpressApp;
+using DevExpress.ExpressApp.ConditionalAppearance;
+using DevExpress.ExpressApp.Editors;
 using DevExpress.ExpressApp.Model;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl;
@@ -21,6 +23,7 @@ namespace MichelTask5.Module.BusinessObjects
         CustomMessageTemplate = "Another WorkGeneration already exists.")]
     [RuleCriteria("CannotDeleteWorkGeneration", DefaultContexts.Delete, "False",
         CustomMessageTemplate = "Cannot delete WorkGeneration.")]
+    [Appearance("DatesVisible", Visibility = ViewItemVisibility.Hide, Criteria = "Plan = 1", Context = "DetailView", TargetItems = "FromDate,ToDate")]
     public class WorkGeneration : BaseObject
     {
         public WorkGeneration(Session session) : base(session)
@@ -66,6 +69,14 @@ namespace MichelTask5.Module.BusinessObjects
             set => SetPropertyValue("User", ref user, value);
         }
 
+        private Enums.PlanType plan;
+        [ImmediatePostData]
+        public Enums.PlanType Plan
+        {
+            get => plan;
+            set => SetPropertyValue("Plan", ref plan, value);
+        }
+
         PermissionPolicyUser GetCurrentUser() =>
             Session.GetObjectByKey<PermissionPolicyUser>(SecuritySystem.CurrentUserId);
 
@@ -108,14 +119,14 @@ namespace MichelTask5.Module.BusinessObjects
             int days = 0;
             switch (plan.Period)
             {
-                case PeriodType.Days:
+                case Enums.PeriodType.Days:
                     days = plan.Number;
                     break;
 
-                case PeriodType.Weeks:
+                case Enums.PeriodType.Weeks:
                     days = plan.Number * 7;
                     break;
-                case PeriodType.Months:
+                case Enums.PeriodType.Months:
                     days = (plan.NextDate - plan.BaseDate).Days;
                     break;
             }
@@ -144,7 +155,7 @@ namespace MichelTask5.Module.BusinessObjects
                 UserId = Guid.Parse(currentUser.ToString()),
                 UserName = currentUserName,
                 SeparateWorkOrderPerEquipment = link.LinkPlan.SeparateWorkOrderPerEquipment,
-                Sequential = link.LinkPlan != null && link.LinkPlan.FrequencyType == FrequencyType.Sequential,
+                Sequential = link.LinkPlan != null && link.LinkPlan.FrequencyType == Enums.FrequencyType.Sequential,
                 Superposed = link.LinkPlan != null && link.LinkPlan.SuperposedPlanFlag
             };
             if (dueDate != null)
@@ -162,15 +173,65 @@ namespace MichelTask5.Module.BusinessObjects
             return workLoadItem;
         }
 
-        public WorkGenerationItem CreateWorkGenerationItem(M_Plan plan, string currentUserName, object currentUser,
+        public WorkLoadItem CreateWorkLoadItemFromCPlan(CPlanEquipmentLink link, string currentUserName,
+            object currentUser, float? counterValue)
+        {
+            if (link.LinkPlan == null)
+            {
+                return null;
+            }
+
+            var workLoadItem = new WorkLoadItem(Session)
+            {
+                PlanNumber = link.LinkPlan != null ? link.LinkPlan.C_Plan_Num : String.Empty,
+                OperationNumber = link.Operation != null ? link.Operation.M_Operation_Num : String.Empty,
+                Equipment = link.LinkEquipment.EquipmentName,
+                DueDate = DateTime.Today,
+                PlanId = link.LinkPlan?.Oid ?? Guid.Empty,
+                OperationId = link.Operation?.Oid ?? Guid.Empty,
+                EquipmentId = link.LinkEquipment?.Oid ?? Guid.Empty,
+                UserId = Guid.Parse(currentUser.ToString()),
+                UserName = currentUserName,
+                SeparateWorkOrderPerEquipment = link.LinkPlan?.SeparateWorkOrderPerEquipment ?? false,
+                Periodic = link.LinkPlan?.Usage == UsageType.Periodic,
+                Threshold = link.LinkPlan?.Usage == UsageType.Threshold,
+                BaseValue = counterValue ?? default
+            };
+
+            workLoadItem.Save();
+
+            return workLoadItem;
+        }
+
+        public WorkGenerationItem CreateWorkGenerationItem(M_Plan mPlan, string currentUserName, object currentUser,
             Work_Order workOrder)
         {
             var workGenerationItem = new WorkGenerationItem(Session)
             {
-                PlanNumber = plan.M_Plan_Num,
-                OperationNumber = plan.Plan_Operation != null ? plan.Plan_Operation.M_Operation_Num : String.Empty,
-                PlanId = plan.Oid,
-                OperationId = plan.Plan_Operation?.Oid ?? Guid.Empty,
+                PlanNumber = mPlan.M_Plan_Num,
+                OperationNumber = mPlan.Plan_Operation != null ? mPlan.Plan_Operation.M_Operation_Num : String.Empty,
+                PlanId = mPlan.Oid,
+                OperationId = mPlan.Plan_Operation?.Oid ?? Guid.Empty,
+                UserId = Guid.Parse(currentUser.ToString()),
+                UserName = currentUserName,
+                WorkOrder = workOrder,
+                WorkGeneration = this
+            };
+
+            workGenerationItem.Save();
+
+            return workGenerationItem;
+        }
+
+        public WorkGenerationItem CreateWorkGenerationItem(C_Plan cPlan, string currentUserName, object currentUser,
+            Work_Order workOrder)
+        {
+            var workGenerationItem = new WorkGenerationItem(Session)
+            {
+                PlanNumber = cPlan.C_Plan_Num,
+                OperationNumber = cPlan.Plan_Operation != null ? cPlan.Plan_Operation.M_Operation_Num : String.Empty,
+                PlanId = cPlan.Oid,
+                OperationId = cPlan.Plan_Operation?.Oid ?? Guid.Empty,
                 UserId = Guid.Parse(currentUser.ToString()),
                 UserName = currentUserName,
                 WorkOrder = workOrder,

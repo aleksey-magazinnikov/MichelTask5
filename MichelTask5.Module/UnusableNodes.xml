@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Application>
+  <Views Id="Views">
+    <DetailView Id="WorkLoad_DetailView">
+      <Layout Id="Layout">
+        <LayoutGroup Id="Main">
+          <TabbedGroup Id="Item1">
+            <LayoutGroup Id="Items_Group" TextAlignMode="AlignWithChildren">
+              <LayoutItem Id="Items" TextAlignMode="AutoSize" />
+            </LayoutGroup>
+            <LayoutGroup Id="Item2" TextAlignMode="AlignWithChildren" />
+          </TabbedGroup>
+          <LayoutGroup Id="SimpleEditors">
+            <LayoutGroup Id="WorkLoad">
+              <LayoutItem Id="FromDate" RelativeSize="51.612903225806448" />
+              <LayoutItem Id="LastDate" RelativeSize="48.387096774193552" />
+            </LayoutGroup>
+          </LayoutGroup>
+        </LayoutGroup>
+      </Layout>
+    </DetailView>
+    <DetailView Id="Work_Order_DetailView">
+      <Layout Id="Layout">
+        <LayoutGroup Id="Main">
+          <LayoutGroup Id="SimpleEditors">
+            <LayoutGroup Id="Work_Order">
+              <LayoutGroup Id="Work_Order_col1">
+                <LayoutItem Id="WO_Num" Removed="True" />
+              </LayoutGroup>
+            </LayoutGroup>
+          </LayoutGroup>
+        </LayoutGroup>
+      </Layout>
+    </DetailView>
+  </Views>
+</Application>

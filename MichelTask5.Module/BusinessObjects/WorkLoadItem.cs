@@ -113,6 +113,21 @@ namespace MichelTask5.Module.BusinessObjects
             get { return sequential; }
             set { SetPropertyValue(nameof(Sequential), ref sequential, value); }
         }
+        
+
+        private bool periodic;
+        public bool Periodic
+        {
+            get { return periodic; }
+            set { SetPropertyValue(nameof(Periodic), ref periodic, value); }
+        }
+        
+        private bool threshold;
+        public bool Threshold
+        {
+            get { return threshold; }
+            set { SetPropertyValue(nameof(Threshold), ref threshold, value); }
+        }
 
         private int sequence;
         [Browsable(false)]
@@ -120,6 +135,14 @@ namespace MichelTask5.Module.BusinessObjects
         {
             get { return sequence; }
             set { SetPropertyValue(nameof(Sequence), ref sequence, value); }
+        }
+        
+        private float baseValue;
+        [Browsable(false)]
+        public float BaseValue
+        {
+            get { return baseValue; }
+            set { SetPropertyValue(nameof(BaseValue), ref baseValue, value); }
         }
     }
 }

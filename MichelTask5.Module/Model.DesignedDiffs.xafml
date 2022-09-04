@@ -4,9 +4,15 @@
     <LayoutManagerOptions RequiredFieldMark="*" />
   </Options>
   <SchemaModules>
-    <SchemaModule Name="SystemModule" Version="21.2.4.0" IsNewNode="True" />
+    <SchemaModule Name="SystemModule" Version="21.2.8.0" IsNewNode="True" />
   </SchemaModules>
   <Views>
+    <ListView Id="Counter_Values_ListView" MasterDetailMode="ListViewOnly" AllowEdit="True" NewItemRowPosition="Top">
+      <Columns>
+        <ColumnInfo Id="Counter" SortIndex="0" SortOrder="Ascending" />
+      </Columns>
+      <SplitLayout SplitterPosition="388" />
+    </ListView>
     <DetailView Id="Work_Order_DetailView">
       <Layout>
         <LayoutGroup Id="Main" RelativeSize="100">
@@ -41,7 +47,6 @@
                 <LayoutItem Id="Status" RelativeSize="15.09433962264151" Index="3" Removed="True" />
                 <LayoutItem Id="Work_orderDate" ViewItem="Work_orderDate" Index="4" RelativeSize="15.09433962264151" Removed="True" />
                 <LayoutItem Id="Work_Request" RelativeSize="34.905660377358494" Index="4" Removed="True" />
-                <LayoutItem Id="WO_Num" Removed="True" />
               </LayoutGroup>
               <LayoutGroup Id="Work_Order_col2" RelativeSize="0.067796610169491525" Caption="Work_Order_col2">
                 <LayoutItem Id="WorkOrder_Number" ViewItem="WorkOrder_Number" Index="0" RelativeSize="100" Removed="True" />
@@ -70,13 +75,24 @@
       </Items>
       <Layout>
         <LayoutGroup Id="Main" RelativeSize="100">
-          <LayoutGroup Id="SimpleEditors" RelativeSize="11.252268602540834">
-            <LayoutGroup Id="WorkLoad" RelativeSize="100">
-              <LayoutItem Id="FromDate" RelativeSize="51.612903225806448" />
-              <LayoutItem Id="LastDate" RelativeSize="48.387096774193552" />
+          <LayoutGroup Id="SimpleEditors" RelativeSize="30.852713178294575">
+            <LayoutGroup Id="WorkLoad" RelativeSize="100" Direction="Vertical">
+              <LayoutGroup Id="WorkLoad_col1" RelativeSize="100">
+                <LayoutItem Id="FromDate" RelativeSize="20" />
+                <LayoutItem Id="ToDate" RelativeSize="15" />
+                <LayoutItem Id="FromValue" RelativeSize="15" />
+                <LayoutItem Id="ToValue" ViewItem="ToValue" Index="3" RelativeSize="15" IsNewNode="True" />
+                <LayoutItem Id="User" ViewItem="User" Index="4" RelativeSize="15" IsNewNode="True" />
+                <LayoutItem Id="Plan" ViewItem="Plan" Index="5" RelativeSize="20" IsNewNode="True" />
+              </LayoutGroup>
+              <LayoutGroup Id="WorkLoad_col2" RelativeSize="50" Caption="WorkLoad_col2" Removed="True">
+                <LayoutItem Id="Plan" Index="0" RelativeSize="100" Removed="True" />
+                <LayoutItem Id="User" Index="0" RelativeSize="28.571428571428573" Removed="True" />
+                <LayoutItem Id="ToValue" Removed="True" />
+              </LayoutGroup>
             </LayoutGroup>
           </LayoutGroup>
-          <TabbedGroup Id="Item1" CaptionLocation="Top" Index="1" RelativeSize="88.747731397459162" IsNewNode="True">
+          <TabbedGroup Id="Item1" CaptionLocation="Top" Index="1" RelativeSize="69.147286821705421" IsNewNode="True">
             <LayoutGroup Id="Items_Group" ShowCaption="True" Caption="Items" TextAlignMode="AlignWithChildren" Index="0" RelativeSize="100" IsNewNode="True">
               <LayoutItem Id="Items" Index="0" RelativeSize="100" TextAlignMode="AutoSize" ViewItem="Items" IsNewNode="True" />
             </LayoutGroup>
@@ -88,11 +104,5 @@
         </LayoutGroup>
       </Layout>
     </DetailView>
-    <ListView Id="Counter_Values_ListView" MasterDetailMode="ListViewOnly" AllowEdit="True" NewItemRowPosition="Top">
-      <Columns>
-        <ColumnInfo Id="Counter" SortIndex="0" SortOrder="Ascending" />
-      </Columns>
-      <SplitLayout SplitterPosition="388" />
-    </ListView>
   </Views>
 </Application>

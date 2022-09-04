@@ -93,6 +93,14 @@ namespace MichelTask5.Module.BusinessObjects
             set { SetPropertyValue(nameof(M_Plan), ref plan, value); }
         }
 
+        C_Plan cPlan;
+        [ModelDefault("AllowEdit", "False")]
+        public C_Plan CPlan
+        {
+            get { return cPlan; }
+            set { SetPropertyValue(nameof(CPlan), ref cPlan, value); }
+        }
+
         WO_Prefix prefix;
         public WO_Prefix Prefix
         {
@@ -194,13 +202,13 @@ namespace MichelTask5.Module.BusinessObjects
             var nextDate = DateTime.Today;
             switch (p.Period)
             {
-                case PeriodType.Days:
+                case Enums.PeriodType.Days:
                     nextDate = p.BaseDate.AddDays(plan.Number);
                     break;
-                case PeriodType.Weeks:
+                case Enums.PeriodType.Weeks:
                     nextDate = p.BaseDate.AddDays(plan.Number * 7);
                     break;
-                case PeriodType.Months:
+                case Enums.PeriodType.Months:
                     nextDate = p.BaseDate.AddMonths(plan.Number);
                     break;
             }
@@ -241,11 +249,15 @@ namespace MichelTask5.Module.BusinessObjects
             if (plan != null && Status == WoTaskStatus.Completed)
             {
                 plan.Plan_Status = 1;
-                if (plan.FrequencyType == FrequencyType.Regular)
+                if (plan.FrequencyType == Enums.FrequencyType.Regular)
                 {
                     plan.BaseDate = fEndDate;
                     plan.NextDate = GetNextDate(plan);
                 }
+            }
+            if (cPlan != null && Status == WoTaskStatus.Completed && cPlan.Usage == UsageType.Periodic)
+            { 
+                cPlan.Plan_Status = 1;
             }
         }
 
