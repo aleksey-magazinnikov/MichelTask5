@@ -253,6 +253,12 @@ namespace MichelTask5.Module.BusinessObjects
                 {
                     plan.BaseDate = fEndDate;
                     plan.NextDate = GetNextDate(plan);
+                    var planSuperposedPlan = plan.SuperposedPlan;
+                    if (plan.Superpose_Plan && planSuperposedPlan != null)
+                    {
+                        planSuperposedPlan.BaseDate = fEndDate;
+                        planSuperposedPlan.NextDate = GetNextDate(planSuperposedPlan);
+                    }
                 }
             }
             if (cPlan != null && Status == WoTaskStatus.Completed && cPlan.Usage == UsageType.Periodic)
