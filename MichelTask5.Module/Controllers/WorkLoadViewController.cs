@@ -33,6 +33,7 @@ namespace MichelTask5.Module.Controllers
             if (View.CurrentObject is WorkLoad workLoad)
             {
                 var objectSpace = View.ObjectSpace;
+
                 switch (workLoad.Plan)
                 {
                     case Enums.PlanType.M:
@@ -50,29 +51,46 @@ namespace MichelTask5.Module.Controllers
                         var collection = objectSpace.GetObjects<PlanEquipmentLink>(CriteriaOperator.Parse(
                             "LinkPlan.Active_Plan == 'true' and LinkPlan.Freez_Plan == 'false' and LinkPlan.Plan_Status == 1 and LinkPlan.NextDate >= ? and LinkPlan.NextDate <= ?",
                             fromDate, toDate));
+                        var superposedPlans = new List<Guid>();
+
                         foreach (PlanEquipmentLink link in collection)
                         {
-                            if (link.LinkPlan.FrequencyType == Enums.FrequencyType.Rolling ||
-                                link.LinkPlan.FrequencyType == Enums.FrequencyType.Sequential)
+                            var plan = link.LinkPlan;
+                            if (plan.Superpose_Plan && plan.SuperposedPlan != null &&
+                                plan.NextDate.Date == plan.SuperposedPlan.NextDate.Date)
                             {
-                                var linkPlanNextDate = link.LinkPlan.NextDate;
-                                var sequence = 1;
-                                while (linkPlanNextDate <= toDate)
-                                {
-                                    var days = workLoad.GetPeriodInDays(link);
-                                    var workLoadItem = workLoad.CreateWorkLoadItem(link, SecuritySystem.CurrentUserName,
-                                        SecuritySystem.CurrentUserId, sequence, linkPlanNextDate);
-                                    workLoad.Items.Add(workLoadItem);
-
-                                    linkPlanNextDate = linkPlanNextDate.AddDays(days);
-                                    sequence++;
-                                }
+                                superposedPlans.Add(plan.SuperposedPlan.Oid);
                             }
-                            else
+                        }
+
+                        foreach (PlanEquipmentLink link in collection)
+                        {
+                            var plan = link.LinkPlan;
+                            if (!superposedPlans.Contains(plan.Oid))
                             {
-                                var workLoadItem = workLoad.CreateWorkLoadItem(link, SecuritySystem.CurrentUserName,
-                                    SecuritySystem.CurrentUserId, null, null);
-                                workLoad.Items.Add(workLoadItem);
+                                if (plan.FrequencyType == Enums.FrequencyType.Rolling ||
+                                    plan.FrequencyType == Enums.FrequencyType.Sequential)
+                                {
+                                    var linkPlanNextDate = plan.NextDate;
+                                    var sequence = 1;
+                                    while (linkPlanNextDate <= toDate)
+                                    {
+                                        var days = workLoad.GetPeriodInDays(plan);
+                                        var workLoadItem = workLoad.CreateWorkLoadItem(link,
+                                            SecuritySystem.CurrentUserName,
+                                            SecuritySystem.CurrentUserId, sequence, linkPlanNextDate);
+                                        workLoad.Items.Add(workLoadItem);
+
+                                        linkPlanNextDate = linkPlanNextDate.AddDays(days);
+                                        sequence++;
+                                    }
+                                }
+                                else
+                                {
+                                    var workLoadItem = workLoad.CreateWorkLoadItem(link, SecuritySystem.CurrentUserName,
+                                        SecuritySystem.CurrentUserId, null, null);
+                                    workLoad.Items.Add(workLoadItem);
+                                }
                             }
                         }
 

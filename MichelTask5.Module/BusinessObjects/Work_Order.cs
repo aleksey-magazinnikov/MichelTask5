@@ -203,13 +203,13 @@ namespace MichelTask5.Module.BusinessObjects
             switch (p.Period)
             {
                 case Enums.PeriodType.Days:
-                    nextDate = p.BaseDate.AddDays(plan.Number);
+                    nextDate = p.BaseDate.AddDays(p.Number);
                     break;
                 case Enums.PeriodType.Weeks:
-                    nextDate = p.BaseDate.AddDays(plan.Number * 7);
+                    nextDate = p.BaseDate.AddDays(p.Number * 7);
                     break;
                 case Enums.PeriodType.Months:
-                    nextDate = p.BaseDate.AddMonths(plan.Number);
+                    nextDate = p.BaseDate.AddMonths(p.Number);
                     break;
             }
 

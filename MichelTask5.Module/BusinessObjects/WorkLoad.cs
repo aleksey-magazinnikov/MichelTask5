@@ -80,22 +80,22 @@ namespace MichelTask5.Module.BusinessObjects
         [CollectionOperationSet(AllowAdd = false, AllowRemove = false)]
         public BindingList<WorkLoadItem> Items => _items ?? (_items = new BindingList<WorkLoadItem>());
 
-        public int GetPeriodInDays(PlanEquipmentLink link)
+        public int GetPeriodInDays(M_Plan linkPlan)
         {
             int days = 0;
-            if (link != null)
+            if (linkPlan != null)
             {
-                switch (link.LinkPlan.Period)
+                switch (linkPlan.Period)
                 {
                     case Enums.PeriodType.Days:
-                        days = link.LinkPlan.Number;
+                        days = linkPlan.Number;
                         break;
 
                     case Enums.PeriodType.Weeks:
-                        days = link.LinkPlan.Number * 7;
+                        days = linkPlan.Number * 7;
                         break;
                     case Enums.PeriodType.Months:
-                        days = (link.LinkPlan.NextDate - link.LinkPlan.BaseDate).Days;
+                        days = (linkPlan.NextDate - linkPlan.BaseDate).Days;
                         break;
                 }
             }
@@ -120,7 +120,7 @@ namespace MichelTask5.Module.BusinessObjects
                 WorkLoad = this,
                 SeparateWorkOrderPerEquipment = link.LinkPlan?.SeparateWorkOrderPerEquipment ?? false,
                 Sequential = link.LinkPlan != null && link.LinkPlan.FrequencyType == Enums.FrequencyType.Sequential,
-                Superposed = link.LinkPlan != null && link.LinkPlan.SuperposedPlanFlag
+                Superpose = link.LinkPlan != null && link.LinkPlan.Superpose_Plan
 
             };
             if (dueDate != null)

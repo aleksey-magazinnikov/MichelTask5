@@ -100,11 +100,11 @@ namespace MichelTask5.Module.BusinessObjects
             set { SetPropertyValue(nameof(SeparateWorkOrderPerEquipment), ref separateWorkOrderPerEquipment, value); }
         }
         
-        private bool superposed;
-        public bool Superposed
+        private bool superpose;
+        public bool Superpose
         {
-            get { return superposed; }
-            set { SetPropertyValue(nameof(Superposed), ref superposed, value); }
+            get { return superpose; }
+            set { SetPropertyValue(nameof(Superpose), ref superpose, value); }
         }
         
         private bool sequential;

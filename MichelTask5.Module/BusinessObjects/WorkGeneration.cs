@@ -156,7 +156,7 @@ namespace MichelTask5.Module.BusinessObjects
                 UserName = currentUserName,
                 SeparateWorkOrderPerEquipment = link.LinkPlan.SeparateWorkOrderPerEquipment,
                 Sequential = link.LinkPlan != null && link.LinkPlan.FrequencyType == Enums.FrequencyType.Sequential,
-                Superposed = link.LinkPlan != null && link.LinkPlan.SuperposedPlanFlag
+                Superpose = link.LinkPlan != null && link.LinkPlan.Superpose_Plan
             };
             if (dueDate != null)
             {
