@@ -533,7 +533,7 @@ namespace MichelTask5.Module.Controllers
                     break;
             }
 
-            return nextDate;
+            return plan.PlanSettings != null ? Utils.GetNextDateBasedOnPlanSettings(nextDate, plan.PlanSettings) : nextDate;
         }
 
         private static void DeleteAllWorkGenerationItems(IObjectSpace os)

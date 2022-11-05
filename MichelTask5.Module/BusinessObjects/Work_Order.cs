@@ -213,7 +213,7 @@ namespace MichelTask5.Module.BusinessObjects
                     break;
             }
 
-            return nextDate;
+            return p.PlanSettings != null ? Utils.GetNextDateBasedOnPlanSettings(nextDate, p.PlanSettings) : nextDate;
         }
 
         private void UpdateSequence()

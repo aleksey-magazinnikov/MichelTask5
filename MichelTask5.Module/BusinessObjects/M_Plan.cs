@@ -69,7 +69,7 @@ namespace MichelTask5.Module.BusinessObjects
                 M_Plan_Num = $"{Sequence:0000}";
                 Plan_Status = 1;
                 BaseDate = DateTime.Today;
-                NextDate = DateTime.Today;
+                NextDate = PlanSettings != null ? Utils.GetNextDateBasedOnPlanSettings(DateTime.Today, PlanSettings) : DateTime.Today;
             }
         }
 
@@ -267,7 +267,7 @@ namespace MichelTask5.Module.BusinessObjects
                     {
                         Number = 0;
                         BaseDate = DateTime.Today;
-                        NextDate = DateTime.Today;
+                        NextDate = PlanSettings != null ? Utils.GetNextDateBasedOnPlanSettings(DateTime.Today, PlanSettings) : DateTime.Today;
                     }
                     else
                     {
@@ -303,6 +303,15 @@ namespace MichelTask5.Module.BusinessObjects
             set { SetPropertyValue(nameof(SeparateWorkOrderPerEquipment), ref separateWorkOrderPerEquipment, value); }
         }
 
+        private PlanSettings _PlanSettings;
+        
+        [RuleRequiredField(DefaultContexts.Save), ImmediatePostData]
+        public PlanSettings PlanSettings
+        {
+            get => _PlanSettings;
+            set => SetPropertyValue(nameof(PlanSettings), ref _PlanSettings, value);
+        }
+
         [Association, Browsable(false)] 
         public IList<PlanEquipmentLink> PlanEquipmentsLinks => GetList<PlanEquipmentLink>(nameof(PlanEquipmentsLinks));
 
@@ -314,17 +323,15 @@ namespace MichelTask5.Module.BusinessObjects
             switch (value)
             {
                 case Enums.PeriodType.Days:
-                    NextDate = BaseDate.AddDays(number);
+                    NextDate = PlanSettings != null ? Utils.GetNextDateBasedOnPlanSettings(BaseDate.AddDays(number), PlanSettings) : BaseDate.AddDays(number);
                     break;
                 case Enums.PeriodType.Weeks:
-                    NextDate = BaseDate.AddDays(number * 7);
+                    NextDate = PlanSettings != null ? Utils.GetNextDateBasedOnPlanSettings(BaseDate.AddDays(number * 7), PlanSettings) : BaseDate.AddDays(number * 7);
                     break;
                 case Enums.PeriodType.Months:
-                    NextDate = BaseDate.AddMonths(number);
+                    NextDate = PlanSettings != null ? Utils.GetNextDateBasedOnPlanSettings(BaseDate.AddMonths(number), PlanSettings) : BaseDate.AddMonths(number);
                     break;
             }
         }
     }
-
-
 }
