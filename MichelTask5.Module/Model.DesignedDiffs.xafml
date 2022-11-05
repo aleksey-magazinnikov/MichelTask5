@@ -13,6 +13,43 @@
       </Columns>
       <SplitLayout SplitterPosition="388" />
     </ListView>
+    <DetailView Id="M_Plan_DetailView">
+      <Layout>
+        <LayoutGroup Id="Main" RelativeSize="100">
+          <LayoutGroup Id="SimpleEditors" RelativeSize="47.124600638977633">
+            <LayoutGroup Id="M_Plan" RelativeSize="100">
+              <LayoutGroup Id="M_Plan_col1" RelativeSize="49.933598937583">
+                <LayoutItem Id="M_Plan_ID" RelativeSize="12.5" />
+                <LayoutItem Id="M_Plan_Num" RelativeSize="9.375" />
+                <LayoutItem Id="Plan_Name" RelativeSize="9.375" />
+                <LayoutItem Id="Active_Plan" RelativeSize="9.375" />
+                <LayoutItem Id="Freez_Plan" RelativeSize="9.375" />
+                <LayoutItem Id="Superpose_Plan" RelativeSize="9.375" />
+                <LayoutItem Id="SuperposedPlan" ViewItem="SuperposedPlan" Index="6" RelativeSize="9.375" IsNewNode="True" Removed="True" />
+                <LayoutItem Id="SuperposeThreshold" ViewItem="SuperposeThreshold" Index="7" RelativeSize="9.375" IsNewNode="True" Removed="True" />
+                <LayoutItem Id="BaseDate" Index="8" RelativeSize="9.375" />
+                <LayoutItem Id="NextDate" Index="9" RelativeSize="12.5" />
+              </LayoutGroup>
+              <LayoutGroup Id="M_Plan_col2" RelativeSize="50.066401062417">
+                <LayoutItem Id="LastDate" RelativeSize="12.5" />
+                <LayoutItem Id="Plan_Status" RelativeSize="9.375" />
+                <LayoutItem Id="FrequencyType" RelativeSize="9.375" />
+                <LayoutItem Id="Plan_Operation" RelativeSize="9.375" />
+                <LayoutItem Id="PlanGroup" RelativeSize="9.375" />
+                <LayoutItem Id="Site" RelativeSize="9.375" />
+                <LayoutItem Id="Period" RelativeSize="9.375" />
+                <LayoutItem Id="Number" RelativeSize="9.375" />
+                <LayoutItem Id="SeparateWorkOrderPerEquipment" RelativeSize="9.375" />
+                <LayoutItem Id="PlanSettings" RelativeSize="12.5" />
+              </LayoutGroup>
+            </LayoutGroup>
+          </LayoutGroup>
+          <LayoutGroup Id="Equipments_Group" Direction="Vertical" RelativeSize="52.875399361022367">
+            <LayoutItem Id="Equipments" RelativeSize="100" />
+          </LayoutGroup>
+        </LayoutGroup>
+      </Layout>
+    </DetailView>
     <DetailView Id="Work_Order_DetailView">
       <Layout>
         <LayoutGroup Id="Main" RelativeSize="100">
@@ -76,21 +113,7 @@
       <Layout>
         <LayoutGroup Id="Main" RelativeSize="100">
           <LayoutGroup Id="SimpleEditors" RelativeSize="30.852713178294575">
-            <LayoutGroup Id="WorkLoad" RelativeSize="100" Direction="Vertical">
-              <LayoutGroup Id="WorkLoad_col1" RelativeSize="100">
-                <LayoutItem Id="FromDate" RelativeSize="20" />
-                <LayoutItem Id="ToDate" RelativeSize="15" />
-                <LayoutItem Id="FromValue" RelativeSize="15" />
-                <LayoutItem Id="ToValue" ViewItem="ToValue" Index="3" RelativeSize="15" IsNewNode="True" />
-                <LayoutItem Id="User" ViewItem="User" Index="4" RelativeSize="15" IsNewNode="True" />
-                <LayoutItem Id="Plan" ViewItem="Plan" Index="5" RelativeSize="20" IsNewNode="True" />
-              </LayoutGroup>
-              <LayoutGroup Id="WorkLoad_col2" RelativeSize="50" Caption="WorkLoad_col2" Removed="True">
-                <LayoutItem Id="Plan" Index="0" RelativeSize="100" Removed="True" />
-                <LayoutItem Id="User" Index="0" RelativeSize="28.571428571428573" Removed="True" />
-                <LayoutItem Id="ToValue" Removed="True" />
-              </LayoutGroup>
-            </LayoutGroup>
+            <LayoutGroup Id="WorkLoad" RelativeSize="100" Direction="Vertical" />
           </LayoutGroup>
           <TabbedGroup Id="Item1" CaptionLocation="Top" Index="1" RelativeSize="69.147286821705421" IsNewNode="True">
             <LayoutGroup Id="Items_Group" ShowCaption="True" Caption="Items" TextAlignMode="AlignWithChildren" Index="0" RelativeSize="100" IsNewNode="True">

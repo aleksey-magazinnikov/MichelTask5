@@ -56,10 +56,21 @@ namespace MichelTask5.Module.Controllers
                         foreach (PlanEquipmentLink link in collection)
                         {
                             var plan = link.LinkPlan;
-                            if (plan.Superpose_Plan && plan.SuperposedPlan != null &&
-                                plan.NextDate.Date == plan.SuperposedPlan.NextDate.Date)
+                            if (plan.Superpose_Plan && plan.SuperposedPlan != null)
                             {
-                                superposedPlans.Add(plan.SuperposedPlan.Oid);
+                                if (plan.NextDate.Date == plan.SuperposedPlan.NextDate.Date)
+                                {
+                                    superposedPlans.Add(plan.SuperposedPlan.Oid);
+                                }
+                                else if (plan.SuperposeThreshold != 0)
+                                {
+                                    var startDate = plan.SuperposedPlan.NextDate.Date.AddDays(-plan.SuperposeThreshold);
+                                    var endDate = plan.SuperposedPlan.NextDate.Date.AddDays(plan.SuperposeThreshold);
+                                    if (plan.NextDate.Date >= startDate && plan.NextDate.Date <= endDate)
+                                    {
+                                        superposedPlans.Add(plan.SuperposedPlan.Oid);
+                                    }
+                                }
                             }
                         }
 

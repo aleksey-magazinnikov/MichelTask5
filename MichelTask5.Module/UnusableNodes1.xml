@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Application>
+  <Views Id="Views">
+    <DetailView Id="WorkLoad_DetailView">
+      <Layout Id="Layout">
+        <LayoutGroup Id="Main">
+          <TabbedGroup Id="Item1">
+            <LayoutGroup Id="Items_Group" TextAlignMode="AlignWithChildren">
+              <LayoutItem Id="Items" TextAlignMode="AutoSize" />
+            </LayoutGroup>
+            <LayoutGroup Id="Item2" TextAlignMode="AlignWithChildren" />
+          </TabbedGroup>
+          <LayoutGroup Id="SimpleEditors">
+            <LayoutGroup Id="WorkLoad">
+              <LayoutGroup Id="WorkLoad_col1" RelativeSize="100">
+                <LayoutItem Id="FromDate" RelativeSize="20" />
+                <LayoutItem Id="ToDate" RelativeSize="15" />
+                <LayoutItem Id="FromValue" RelativeSize="15" />
+                <LayoutItem Id="ToValue" ViewItem="ToValue" Index="3" RelativeSize="15" />
+                <LayoutItem Id="User" ViewItem="User" Index="4" RelativeSize="15" />
+                <LayoutItem Id="Plan" ViewItem="Plan" Index="5" RelativeSize="20" />
+              </LayoutGroup>
+              <LayoutGroup Id="WorkLoad_col2" RelativeSize="50" Caption="WorkLoad_col2" Removed="True">
+                <LayoutItem Id="Plan" Index="0" RelativeSize="100" Removed="True" />
+                <LayoutItem Id="User" Index="0" RelativeSize="28.571428571428573" Removed="True" />
+                <LayoutItem Id="ToValue" Removed="True" />
+              </LayoutGroup>
+            </LayoutGroup>
+          </LayoutGroup>
+        </LayoutGroup>
+      </Layout>
+    </DetailView>
+  </Views>
+</Application>

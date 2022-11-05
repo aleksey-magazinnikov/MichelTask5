@@ -114,19 +114,30 @@ namespace MichelTask5.Module.BusinessObjects
                 if (!IsLoading && !IsSaving && modified && !value)
                 {
                     SuperposedPlan = null;
+                    SuperposeThreshold = 0;
                 }
             }
         }
 
+        private int superposeThreshold;
+
+        [Size(3)]
+        [Appearance("SuperposeThresholdHiden", Visibility = ViewItemVisibility.ShowEmptySpace, Criteria = "Superpose_Plan == false", Context = "DetailView")]
+        public int SuperposeThreshold
+        {
+            get => superposeThreshold;
+            set => SetPropertyValue(nameof(SuperposeThreshold), ref superposeThreshold, value);
+        }
+
         //private bool superposedPlanFlag;
-        
+
         //[Browsable(false)]
         //public bool SuperposedPlanFlag
         //{
         //    get { return superposedPlanFlag; }
         //    set { SetPropertyValue(nameof(SuperposedPlanFlag), ref superposedPlanFlag, value); }
         //}
-        
+
         private M_Plan superposedPlan;
         [Appearance("SuperposedPlanHiden", Visibility = ViewItemVisibility.ShowEmptySpace, Criteria = "Superpose_Plan == false", Context = "DetailView")]
         [DataSourceProperty(nameof(AvailablePlans), DataSourcePropertyIsNullMode.SelectNothing)]
