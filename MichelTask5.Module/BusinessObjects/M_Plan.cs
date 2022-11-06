@@ -314,6 +314,13 @@ namespace MichelTask5.Module.BusinessObjects
             set { SetPropertyValue(nameof(SeparateWorkOrderPerEquipment), ref separateWorkOrderPerEquipment, value); }
         }
 
+        private PlanSequence _planSequence;
+        public PlanSequence PlanSequence
+        {
+            get => _planSequence;
+            set => SetPropertyValue(nameof(PlanSequence), ref _planSequence, value);
+        }
+        
         private PlanSettings _PlanSettings;
         
         [RuleRequiredField(DefaultContexts.Save), ImmediatePostData]

@@ -116,6 +116,7 @@
     <Compile Include="BusinessObjects\Ope_Equ.cs" />
     <Compile Include="BusinessObjects\PlanEquipmentLink.cs" />
     <Compile Include="BusinessObjects\PlanGroup.cs" />
+    <Compile Include="BusinessObjects\PlanSequence.cs" />
     <Compile Include="BusinessObjects\PlanSettings.cs" />
     <Compile Include="BusinessObjects\PlanSettingsNonWorkingDates.cs" />
     <Compile Include="BusinessObjects\ShiftWoParameters.cs" />
@@ -137,6 +138,8 @@
     </Compile>
     <Compile Include="Controllers\FilterWorkGenerationListViewController.cs" />
     <Compile Include="Controllers\FilterWorkLoadListViewController.cs" />
+    <Compile Include="Controllers\PlanListViewController.cs" />
+    <Compile Include="Controllers\ShiftPlanParameters.cs" />
     <Compile Include="Controllers\ShiftWorkOrderViewController.cs">
       <SubType>Component</SubType>
     </Compile>
