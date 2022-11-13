@@ -92,7 +92,10 @@ namespace MichelTask5.Module.Controllers
                                             SecuritySystem.CurrentUserId, sequence, linkPlanNextDate);
                                         workLoad.Items.Add(workLoadItem);
 
-                                        linkPlanNextDate = linkPlanNextDate.AddDays(days);
+                                        linkPlanNextDate =
+                                            Utils.GetNextDateBasedOnPlanSettings(linkPlanNextDate.AddDays(days),
+                                                plan.PlanSettings);
+
                                         sequence++;
                                     }
                                 }
